@@ -1,0 +1,1 @@
+{"Name":"Chainsaw rules + Sigma (high/critical)","Description":"Built-in rules plus Sigma high/critical.","Sigma":"sigma/rules","Rules":"rules","Mapping":"mappings/sigma-event-logs-all.yml","Level":["high","critical"]}

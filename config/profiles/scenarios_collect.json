@@ -1,0 +1,86 @@
+[
+  {
+    "Id": "first5",
+    "Title": "First 5 minutes",
+    "Tagline": "Grab what disappears first, then look around",
+    "When": "You just arrived at a machine and do not know yet what is wrong. This takes the volatile data (connections, processes, sessions) before it changes, saves a snapshot, and runs the Live Hunt.",
+    "Tasks": ["datetime", "uptime", "hostname", "netstat", "netconn", "listening", "dnscache", "arp", "processes", "tasklist_svc", "query_user", "qwinsta", "net_admins", "localusers", "tri_netsus", "tri_proctree"],
+    "Artifacts": [],
+    "EventGroups": [],
+    "Snapshot": true,
+    "Hunt": true,
+    "Minutes": "3 to 6"
+  },
+  {
+    "Id": "malware",
+    "Title": "Suspected malware",
+    "Tagline": "Unknown program, alert from antivirus or EDR, odd behaviour",
+    "When": "Something is running that should not be, or an alert named a file. Collects process, service, task and autostart state, execution traces (Prefetch, Amcache, Shimcache), Defender history and the logs that show what ran.",
+    "Tasks": ["datetime", "uptime", "hostname", "netstat", "netconn", "listening", "dnscache", "processes", "tasklist_svc", "services", "startup", "schtasks", "installedsw", "defender", "query_user", "tri_proctree", "tri_netsus", "tri_services", "tri_runkeys", "tri_startupfolders", "tri_wmi", "tri_tasks", "tri_defender", "tri_recentexe"],
+    "Artifacts": ["prefetch", "amcache", "shimcache", "temp", "wer", "defender", "tasks", "services"],
+    "EventGroups": ["Core", "PowerShell", "Defender", "Sysmon", "Persistence"],
+    "Snapshot": true,
+    "Hunt": true,
+    "Minutes": "10 to 25"
+  },
+  {
+    "Id": "logons",
+    "Title": "Suspicious logons or RDP",
+    "Tagline": "Brute force, a stranger logged in, lateral movement",
+    "When": "Someone may have logged on who should not have, or an account is being guessed. Collects sessions, accounts, the RDP traces left on this machine and the logon, RDP and remote-access logs.",
+    "Tasks": ["datetime", "hostname", "query_user", "qwinsta", "net_user", "net_admins", "localusers", "netcfgws", "netshares", "firewall", "netstat", "netconn"],
+    "Artifacts": ["rdp", "lnkjump", "useractivity"],
+    "EventGroups": ["Core", "RDP", "Remote", "Firewall"],
+    "Snapshot": false,
+    "Hunt": true,
+    "Minutes": "5 to 15"
+  },
+  {
+    "Id": "ransomware",
+    "Title": "Ransomware or destructive activity",
+    "Tagline": "Files encrypted, backups deleted, services stopped",
+    "When": "Files are encrypted or shadow copies are gone. Capture memory FIRST if the machine is still on (Memory page): keys and the running malware may still be there. This set collects state, shares, recent dropped files and the logs around the event.",
+    "Tasks": ["datetime", "uptime", "hostname", "netstat", "netconn", "processes", "tasklist_svc", "services", "drives", "mountvol", "netshares", "query_user", "tri_proctree", "tri_netsus", "tri_recentexe", "tri_defender"],
+    "Artifacts": ["temp", "recycle", "defender", "prefetch", "amcache"],
+    "EventGroups": ["Core", "PowerShell", "Defender", "RDP"],
+    "Snapshot": true,
+    "Hunt": true,
+    "Minutes": "10 to 25"
+  },
+  {
+    "Id": "insider",
+    "Title": "Data theft or user activity",
+    "Tagline": "What did this user open, copy, browse or plug in",
+    "When": "Looking at what a person did: files opened, USB and shares, browser history, deleted files. Several of these items hold private data; use them only with authority.",
+    "Tasks": ["datetime", "hostname", "installedsw", "drives", "netshares", "query_user", "localusers"],
+    "Artifacts": ["lnkjump", "recycle", "browser", "useractivity", "rdp", "shimcache", "amcache", "userhives", "reghives"],
+    "EventGroups": ["Core"],
+    "Snapshot": false,
+    "Hunt": false,
+    "Minutes": "10 to 30"
+  },
+  {
+    "Id": "persistence",
+    "Title": "Persistence sweep",
+    "Tagline": "How would an attacker come back after a reboot",
+    "When": "Checks every common autostart place and scores it: services, tasks, Run keys, startup folders, WMI, drivers and registry hooks.",
+    "Tasks": ["datetime", "hostname", "services", "startup", "schtasks", "driverquery", "tri_services", "tri_runkeys", "tri_startupfolders", "tri_wmi", "tri_tasks", "tri_defender"],
+    "Artifacts": ["tasks", "services", "wmi", "reghives", "userhives", "shimcache", "amcache"],
+    "EventGroups": ["Persistence"],
+    "Snapshot": true,
+    "Hunt": true,
+    "Minutes": "5 to 12"
+  },
+  {
+    "Id": "full",
+    "Title": "Full triage",
+    "Tagline": "Everything that is safe to collect live",
+    "When": "You want it all and have the time and disk space. Runs all live-response tasks, all triage tasks, all file artifacts except raw disk structures, every event log that exists, a snapshot and the Live Hunt.",
+    "Tasks": ["*quick", "*triage"],
+    "Artifacts": ["*all-but-heavy"],
+    "EventGroups": ["*all"],
+    "Snapshot": true,
+    "Hunt": true,
+    "Minutes": "20 to 60"
+  }
+]

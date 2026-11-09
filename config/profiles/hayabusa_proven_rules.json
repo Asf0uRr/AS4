@@ -1,0 +1,11 @@
+﻿{
+    "Name":  "Proven rules only",
+    "Description":  "Rules listed as proven (few false positives), standard profile.",
+    "Command":  "dfir-timeline",
+    "Options":  {
+                    "proven-rules":  true,
+                    "profile":  "standard",
+                    "utc":  true,
+                    "html-report":  true
+                }
+}

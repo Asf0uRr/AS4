@@ -1,0 +1,8 @@
+﻿{
+    "Name":  "Base64 extraction",
+    "Description":  "Find and decode base64 strings in events (encoded PowerShell and similar).",
+    "Command":  "extract-base64",
+    "Options":  {
+                    "utc":  true
+                }
+}

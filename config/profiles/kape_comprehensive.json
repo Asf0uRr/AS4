@@ -1,0 +1,11 @@
+﻿{
+    "Name":  "Comprehensive Endpoint Triage",
+    "Description":  "Broad KapeTriage collection. Slow and large; check free space first.",
+    "Live":  true,
+    "Targets":  [
+                    "KapeTriage"
+                ],
+    "Modules":  [
+
+                ]
+}

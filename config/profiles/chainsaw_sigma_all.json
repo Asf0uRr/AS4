@@ -1,0 +1,1 @@
+{"Name":"Sigma - all rules (broad)","Description":"Bundled Sigma rules with the all-events mapping. Broadest coverage, most noise.","Sigma":"sigma/rules","Rules":"","Mapping":"mappings/sigma-event-logs-all.yml","Level":[]}

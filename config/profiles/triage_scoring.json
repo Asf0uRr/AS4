@@ -1,0 +1,29 @@
+{
+ "Note": "Transparent scoring for Quick Scan. Edit freely. Points per unique rule = Weight x (1 + log10(hits)), capped per severity. A flag adds its points once when a rule of severity low or higher matches its pattern.",
+ "Levels": {
+  "critical": { "Weight": 10, "Cap": 60 },
+  "high":     { "Weight": 4,  "Cap": 40 },
+  "medium":   { "Weight": 0.5, "Cap": 10 },
+  "low":      { "Weight": 0.1, "Cap": 3 }
+ },
+ "Flags": [
+  { "Id": "log_cleared",   "Points": 25, "Pattern": "log.{0,20}clear|clear.{0,20}log|Audit Policy|audit.{0,15}(disabled|changed)|EventLog.{0,15}(stop|disabl)|wevtutil", "Reason": "Event logs were cleared or auditing was changed. Attackers do this to hide their tracks." },
+  { "Id": "av_tamper",     "Points": 20, "Pattern": "Defender.{0,40}(disabled|tamper|exclusion|stopped)|Antivirus.{0,30}(disabled|tamper)|Real.?Time Protection.{0,20}(disabled|off)", "Reason": "Antivirus protection was turned off or weakened." },
+  { "Id": "cred_dump",     "Points": 25, "Pattern": "Mimikatz|LSASS|Credential Dump|DCSync|Kerberoast|Pass.?the.?(Hash|Ticket)|SAM.{0,20}(dump|hive)|NTDS", "Reason": "Signs of credential theft (LSASS, Mimikatz style, DCSync, Kerberoasting or hash/ticket reuse)." },
+  { "Id": "ransomware",    "Points": 30, "Pattern": "Ransom|Shadow.{0,15}(Copy|Copies).{0,20}(Delet|Remov)|vssadmin.{0,20}delete|bcdedit.{0,40}(recovery|ignoreall)|wbadmin.{0,20}delete", "Reason": "Behaviour typical of ransomware preparation (shadow copies or recovery options removed)." },
+  { "Id": "c2_tools",      "Points": 20, "Pattern": "Cobalt|Meterpreter|Sliver|Empire|Metasploit|PsExec|Impacket|Covenant|Brute Ratel|Havoc", "Reason": "Names of well-known attack frameworks or remote-execution tools appear in the findings." },
+  { "Id": "encoded_ps",    "Points": 10, "Pattern": "Encoded.{0,15}(Command|PowerShell)|Base64|Obfuscat|Download Cradle|Invoke-Expression|IEX|DownloadString|AMSI.{0,15}(bypass|disable)", "Reason": "Encoded, obfuscated or download-and-run PowerShell was seen." },
+  { "Id": "persistence",   "Points": 8,  "Pattern": "(New|Suspicious|Malicious).{0,20}(Service|Scheduled Task|Autorun|Run Key)|Persistence|Startup Folder|WMI.{0,20}(Subscription|Consumer|Persistence)", "Reason": "A new or suspicious service, scheduled task, autorun or WMI subscription was created." },
+  { "Id": "lateral",       "Points": 8,  "Pattern": "Lateral|Admin Share|ADMIN\\$|Remote Service|RDP.{0,30}(Hijack|Tunnel)|WinRM.{0,20}Remote|PsExec", "Reason": "Signs of movement between machines." },
+  { "Id": "new_admin",     "Points": 10, "Pattern": "(User|Account).{0,25}(Created|Added).{0,40}(Admin|Domain Admins)|Added.{0,30}Administrators|Hidden (User|Account)", "Reason": "A new account was created or added to an administrator group." },
+  { "Id": "bruteforce_ok", "Points": 20, "Pattern": "^$", "Reason": "A source that failed to log on many times later logged on successfully (possible password guessing that worked)." }
+ ],
+ "BruteForce": { "MinFailures": 10 },
+ "Verdicts": [
+  { "Max": 0,   "Name": "No rule matched",  "Color": "green",  "Text": "None of the bundled rules matched these logs. This does not prove the machine is clean: the logs may be incomplete, short, or missing the sources that matter (see Blind spots)." },
+  { "Max": 14,  "Name": "A few findings",   "Color": "yellow", "Text": "Some rule matches. Most are often normal activity, but review the top findings." },
+  { "Max": 39,  "Name": "Needs attention",  "Color": "orange", "Text": "Several suspicious findings. Treat as a lead and verify the top findings and the accounts and hosts involved." },
+  { "Max": 79,  "Name": "Likely malicious", "Color": "red",    "Text": "Many serious findings together. Behave as if there is an incident: preserve evidence first, then investigate the incident window." },
+  { "Max": 100000, "Name": "Serious indicators", "Color": "darkred", "Text": "Strong, multiple indicators of attacker activity. Treat as an incident and preserve evidence before changing anything." }
+ ]
+}

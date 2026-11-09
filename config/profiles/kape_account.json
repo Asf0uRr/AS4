@@ -1,0 +1,15 @@
+﻿{
+    "Name":  "Account Compromise",
+    "Description":  "Authentication logs, registry, user activity and browsers; then parse event logs.",
+    "Live":  true,
+    "Targets":  [
+                    "EventLogs",
+                    "RegistryHives",
+                    "LNKFilesAndJumpLists",
+                    "WebBrowsers",
+                    "RDPLogs"
+                ],
+    "Modules":  [
+                    "EvtxECmd"
+                ]
+}

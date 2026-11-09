@@ -1,0 +1,1 @@
+{"Name":"Sigma - high and critical only","Description":"Sigma rules restricted to high/critical levels for fast triage.","Sigma":"sigma/rules","Rules":"","Mapping":"mappings/sigma-event-logs-all.yml","Level":["high","critical"]}

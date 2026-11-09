@@ -1,0 +1,15 @@
+﻿{
+    "Name":  "Browser and User Activity",
+    "Description":  "Browser data (authorised use only), jump lists, user hives, Windows Timeline.",
+    "Live":  true,
+    "Targets":  [
+                    "WebBrowsers",
+                    "BrowserCache",
+                    "LNKFilesAndJumpLists",
+                    "RegistryHivesUser",
+                    "WindowsTimeline"
+                ],
+    "Modules":  [
+
+                ]
+}

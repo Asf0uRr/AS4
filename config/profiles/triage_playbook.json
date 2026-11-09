@@ -1,0 +1,32 @@
+{
+ "Note": "Plain next steps shown by Quick Scan. Keyed by the MITRE tactic abbreviation Hayabusa uses, in kill-chain order. Based on common DFIR practice (SANS FOR508 Hunt Evil, MITRE ATT&CK, Mandiant attack lifecycle).",
+ "Always": [
+  "Preserve first: capture memory and the logs before rebooting, cleaning or reconfiguring (Memory and Event Logs pages).",
+  "Write down the incident window shown above and use it to limit what you collect and review."
+ ],
+ "Tactics": {
+  "InitAccess":  { "Name": "Initial Access",      "Steps": ["Find how they got in: look at the first serious finding and the logon or download just before it.", "Check RDP and VPN logons from unusual addresses (Hayabusa page, Remote Desktop activity)."] },
+  "Exec":        { "Name": "Execution",           "Steps": ["Review PowerShell and process findings in time order (Hayabusa page, PowerShell activity and Programs started).", "Collect the scripts and binaries involved and hash them (Artifacts page, Persistence page)."] },
+  "Persis":      { "Name": "Persistence",         "Steps": ["List services, scheduled tasks, Run keys and WMI subscriptions and compare with a known-good machine (Persistence page, Autoruns).", "Do not remove anything yet; collect it first."] },
+  "PrivEsc":     { "Name": "Privilege Escalation","Steps": ["Check which accounts gained admin rights and when (Hayabusa page, Accounts and Admin logons)."] },
+  "Stealth":     { "Name": "Defence Evasion",     "Steps": ["Check for cleared logs and disabled protection (Hayabusa page, Logs cleared and Antivirus).", "Because logs may have been tampered with, also collect artifacts that attackers rarely clean: Prefetch, Amcache, SRUM (Artifacts page)."] },
+  "DefImpair":   { "Name": "Defence Impairment",  "Steps": ["Confirm whether antivirus, firewall or logging was turned off, by whom and when."] },
+  "CredAccess":  { "Name": "Credential Access",   "Steps": ["Assume the accounts seen here are exposed. Plan password resets for them and for any admin who logged on.", "Look for the same accounts logging on elsewhere (Hayabusa page, Logon summary)."] },
+  "Disc":        { "Name": "Discovery",           "Steps": ["Discovery commands usually mean someone is exploring the network by hand. Check who ran them and from where."] },
+  "LatMov":      { "Name": "Lateral Movement",    "Steps": ["List the source addresses and accounts, then check those machines too.", "Look at file share access and remote execution (Hayabusa page)."] },
+  "Collect":     { "Name": "Collection",          "Steps": ["Check for archives or large copies created before the incident window ends (Artifacts page, folder collection)."] },
+  "C2":          { "Name": "Command and Control", "Steps": ["Review outbound connections and DNS cache (Quick Response page) and check the addresses offline against your intel."] },
+  "Exfil":       { "Name": "Exfiltration",        "Steps": ["Check large outbound transfers and cloud or file-sharing tools; involve the network team for flow data."] },
+  "Impact":      { "Name": "Impact",              "Steps": ["If files are encrypted or deleted, isolate the machine from the network now and keep it powered on for memory capture."] }
+ },
+ "Order": ["Recon", "ResDev", "InitAccess", "Exec", "Persis", "PrivEsc", "Stealth", "DefImpair", "CredAccess", "Disc", "LatMov", "Collect", "C2", "Exfil", "Impact"],
+ "Blind": {
+  "Security":         "No Security log: logons, failed logons, account changes and process auditing cannot be checked.",
+  "System":           "No System log: service installs and crashes cannot be checked.",
+  "PowerShell":       "No PowerShell log: what PowerShell ran (script content) cannot be seen.",
+  "Sysmon":           "No Sysmon log: detailed process, network and file activity is not available unless Security process auditing was on.",
+  "Defender":         "No Defender log: antivirus detections and protection changes cannot be seen.",
+  "TerminalServices": "No Remote Desktop logs: RDP connections cannot be checked.",
+  "TaskScheduler":    "No Task Scheduler log: scheduled task creation and runs cannot be checked."
+ }
+}

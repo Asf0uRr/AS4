@@ -1,0 +1,12 @@
+﻿{
+    "Name":  "Last 7 days",
+    "Description":  "Low and above for the last 7 days only.",
+    "Command":  "dfir-timeline",
+    "Options":  {
+                    "time-offset":  "7d",
+                    "min-level":  "low",
+                    "profile":  "standard",
+                    "utc":  true,
+                    "html-report":  true
+                }
+}

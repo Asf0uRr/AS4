@@ -1,0 +1,10 @@
+﻿{
+    "Name":  "Timesketch export",
+    "Description":  "Timesketch-ready CSV (profile timesketch-verbose), sorted, UTC.",
+    "Command":  "dfir-timeline",
+    "Options":  {
+                    "profile":  "timesketch-verbose",
+                    "utc":  true,
+                    "sort":  true
+                }
+}

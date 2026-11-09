@@ -1,0 +1,8 @@
+﻿{
+    "Name":  "Log file inventory",
+    "Description":  "Metadata of every event log file (size, first and last event).",
+    "Command":  "log-metrics",
+    "Options":  {
+                    "utc":  true
+                }
+}

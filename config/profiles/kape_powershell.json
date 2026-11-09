@@ -1,0 +1,14 @@
+﻿{
+    "Name":  "PowerShell Investigation",
+    "Description":  "PowerShell console history, logs, prefetch, registry; then parse event logs.",
+    "Live":  true,
+    "Targets":  [
+                    "PowerShellConsole",
+                    "EventLogs",
+                    "Prefetch",
+                    "RegistryHives"
+                ],
+    "Modules":  [
+                    "EvtxECmd"
+                ]
+}

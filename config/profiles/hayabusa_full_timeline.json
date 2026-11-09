@@ -1,0 +1,12 @@
+﻿{
+    "Name":  "Full timeline (all rules, noisy included)",
+    "Description":  "Every rule level including noisy ones, verbose profile, sorted. Slow, large output.",
+    "Command":  "dfir-timeline",
+    "Options":  {
+                    "enable-noisy-rules":  true,
+                    "profile":  "verbose",
+                    "utc":  true,
+                    "html-report":  true,
+                    "sort":  true
+                }
+}

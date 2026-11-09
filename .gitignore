@@ -1,0 +1,25 @@
+# Cases and anything collected from a machine: never publish
+output/*
+!output/README.txt
+dist/
+
+# Third-party programs are fetched by scripts/Get-Tools.ps1 or added by hand; only the folder notes are tracked
+tools/*
+!tools/README.md
+
+# Large or mixed-licence rule sets and third-party documents
+config/rules/yara/community/
+docs/*.pdf
+
+# Built files (attach them to a GitHub release instead)
+*.exe
+*.zip
+*.sha256
+*.log
+*.tmp
+
+# Editors and OS
+.vs/
+.vscode/
+Thumbs.db
+desktop.ini

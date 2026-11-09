@@ -1,0 +1,22 @@
+{
+  "_note": "Things AS4 causes by itself on the machine it examines (its own commands, scripts, exports, rule files). Findings whose text matches are left out of verdicts and reported as a count. The AS4 folder path is added automatically. Edit or extend; regular expressions, case-insensitive. Raw evidence is never changed.",
+  "Markers": [
+    "AS4 IR Tool",
+    "AS4_IR_Tool",
+    "Get-LhIndicators",
+    "New-LhFinding",
+    "Test-Lh[A-Z]",
+    "Invoke-LiveHunt",
+    "Invoke-LiveWatch",
+    "Invoke-As4",
+    "Start-As4",
+    "New-As4",
+    "Get-As4",
+    "Export-As4",
+    "Write-As4",
+    "as4_(dev|pkg|synth|empty|shot)",
+    "\\\\a4r[0-9a-f]{6}\\\\"
+  ],
+  "BundledToolNames": ["hayabusa", "chainsaw", "yara", "yara64", "winpmem", "autorunsc", "autorunsc64", "sigcheck", "sigcheck64", "handle", "handle64", "listdlls", "listdlls64", "strings", "strings64", "tcpview", "vol"],
+  "Extra": []
+}

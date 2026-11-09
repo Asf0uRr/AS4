@@ -1,0 +1,12 @@
+﻿{
+    "Name":  "Quick triage",
+    "Description":  "Medium and above, common event IDs only, standard profile, UTC, HTML summary. Fast first pass.",
+    "Command":  "dfir-timeline",
+    "Options":  {
+                    "min-level":  "medium",
+                    "eid-filter":  true,
+                    "profile":  "standard",
+                    "utc":  true,
+                    "html-report":  true
+                }
+}

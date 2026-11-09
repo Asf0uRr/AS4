@@ -1,0 +1,16 @@
+﻿{
+    "Name":  "RDP and Lateral Movement",
+    "Description":  "RDP and remote logon logs, bitmap cache, jump lists, prefetch; then parse RDP events.",
+    "Live":  true,
+    "Targets":  [
+                    "EventLogs-RDP",
+                    "RDPLogs",
+                    "RDPCache",
+                    "RegistryHives",
+                    "LNKFilesAndJumpLists",
+                    "Prefetch"
+                ],
+    "Modules":  [
+                    "EvtxECmd_RDP"
+                ]
+}

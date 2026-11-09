@@ -1,0 +1,8 @@
+﻿{
+    "Name":  "Event ID metrics",
+    "Description":  "How many events of each ID, per channel.",
+    "Command":  "eid-metrics",
+    "Options":  {
+                    "utc":  true
+                }
+}

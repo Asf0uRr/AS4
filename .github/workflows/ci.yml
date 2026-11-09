@@ -1,0 +1,52 @@
+name: checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  syntax:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Every script parses and is ASCII only
+        shell: powershell
+        run: |
+          $bad = 0
+          Get-ChildItem -Recurse -File -Include *.ps1 -Path app, tasks, scripts | ForEach-Object {
+            $errs = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$null, [ref]$errs)
+            if ($errs) { $bad++; Write-Host "PARSE ERROR $($_.FullName)"; $errs | ForEach-Object { Write-Host "  line $($_.Extent.StartLineNumber): $($_.Message)" } }
+            $b = [IO.File]::ReadAllBytes($_.FullName)
+            if (($b | Where-Object { $_ -gt 127 }).Count) { $bad++; Write-Host "NON-ASCII $($_.FullName)" }
+          }
+          if ($bad) { exit 1 }
+
+      - name: JSON files are valid
+        shell: powershell
+        run: |
+          $bad = 0
+          Get-ChildItem -Recurse -File -Include *.json -Path config | ForEach-Object {
+            try { [void](Get-Content $_.FullName -Raw | ConvertFrom-Json) } catch { $bad++; Write-Host "BAD JSON $($_.FullName): $($_.Exception.Message)" }
+          }
+          if ($bad) { exit 1 }
+
+      - name: Detection patterns compile
+        shell: powershell
+        run: |
+          $j = Get-Content config/profiles/live_indicators.json -Raw | ConvertFrom-Json
+          $bad = 0
+          foreach ($p in @($j.CommandLines.Pattern) + @($j.Tools.Pattern) + @($j.NamedPipes.Pattern)) { try { [void][regex]::new($p) } catch { $bad++; Write-Host "BAD REGEX $p" } }
+          if ($bad) { exit 1 }
+
+      - name: Self-test (read-only checks that need no extra tools)
+        shell: powershell
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/Test-AS4.ps1
+        continue-on-error: true
+
+      - name: No personal data or build leftovers
+        shell: powershell
+        run: |
+          $hits = Get-ChildItem -Recurse -File -Include *.ps1, *.md, *.json, *.cs, *.cmd -Path . | Where-Object { $_.FullName -notmatch '\\(\.git|tools)\\' } | Select-String -Pattern '[A-Z]:\\Users\\[A-Za-z0-9_.-]+\\(Desktop|Documents|Downloads)' | Where-Object { $_.Line -notmatch 'e\.g\.|Example|example' }
+          if ($hits) { $hits | ForEach-Object { Write-Host "$($_.Path):$($_.LineNumber): $($_.Line.Trim())" }; exit 1 }

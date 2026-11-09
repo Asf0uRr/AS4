@@ -1,0 +1,11 @@
+﻿{
+    "Name":  "High and critical alerts",
+    "Description":  "Only high and critical rules, verbose profile (MITRE tags, rule file), UTC, HTML summary.",
+    "Command":  "dfir-timeline",
+    "Options":  {
+                    "min-level":  "high",
+                    "profile":  "verbose",
+                    "utc":  true,
+                    "html-report":  true
+                }
+}

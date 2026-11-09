@@ -1,0 +1,16 @@
+﻿{
+    "Name":  "Persistence Investigation",
+    "Description":  "Autostart locations, tasks, startup folders, remote admin tools; then registry autostart (ASEP) parsing.",
+    "Live":  true,
+    "Targets":  [
+                    "RegistryHives",
+                    "ScheduledTasks",
+                    "StartupFolders",
+                    "StartupInfo",
+                    "EventLogs",
+                    "RemoteAdmin"
+                ],
+    "Modules":  [
+                    "RECmd_RegistryASEPs"
+                ]
+}

@@ -1,0 +1,103 @@
+{
+  "_note": "Editable lists used by Live Hunt and Live Watch. Add your own patterns (regular expressions, case-insensitive). Nothing here is sent anywhere.",
+
+  "SystemProcesses": {
+    "smss.exe":       { "Parent": "system", "Single": false },
+    "csrss.exe":      { "Parent": "",       "Single": false },
+    "wininit.exe":    { "Parent": "",       "Single": true },
+    "winlogon.exe":   { "Parent": "",       "Single": false },
+    "services.exe":   { "Parent": "wininit.exe", "Single": true },
+    "lsass.exe":      { "Parent": "wininit.exe", "Single": true },
+    "svchost.exe":    { "Parent": "services.exe", "Single": false },
+    "spoolsv.exe":    { "Parent": "services.exe", "Single": true },
+    "taskhostw.exe":  { "Parent": "svchost.exe", "Single": false },
+    "runtimebroker.exe": { "Parent": "svchost.exe", "Single": false },
+    "dwm.exe":        { "Parent": "winlogon.exe", "Single": false }
+  },
+
+  "LookalikeOf": ["svchost.exe", "lsass.exe", "csrss.exe", "services.exe", "explorer.exe", "winlogon.exe", "smss.exe", "wininit.exe", "taskhost.exe", "spoolsv.exe", "conhost.exe", "rundll32.exe", "powershell.exe", "dllhost.exe", "searchindexer.exe"],
+
+  "LookalikeAllow": ["dashost.exe", "sihost.exe", "ctfmon.exe", "fontdrvhost.exe", "audiodg.exe", "lsaiso.exe", "wlanext.exe", "searchhost.exe", "searchapp.exe", "smartscreen.exe", "dllhost.exe", "taskhostw.exe", "backgroundtaskhost.exe", "applicationframehost.exe", "winlogon.exe", "wudfhost.exe", "svchost.exe"],
+
+  "NoNetworkExpected": ["notepad.exe", "calc.exe", "calculator.exe", "mspaint.exe", "wordpad.exe", "write.exe", "charmap.exe", "snippingtool.exe", "winver.exe", "taskmgr.exe", "regedit.exe", "mmc.exe", "eventvwr.exe", "cmstp.exe", "msbuild.exe", "installutil.exe", "regasm.exe", "regsvcs.exe", "mshta.exe", "wscript.exe", "cscript.exe", "certutil.exe", "bitsadmin.exe", "rundll32.exe", "regsvr32.exe"],
+
+  "ShellSpawners": {
+    "Office and reader programs": "^(winword|excel|powerpnt|outlook|msaccess|mspub|visio|onenote|acrord32|acrobat|foxitreader|foxitphantompdf)\\.exe$",
+    "Web and database servers": "^(w3wp|httpd|nginx|tomcat\\d*|java|php-cgi|sqlservr|mysqld|wmiprvse)\\.exe$",
+    "Script hosts": "^(wscript|cscript|mshta)\\.exe$"
+  },
+  "ShellNames": "^(cmd|powershell|pwsh|wscript|cscript|mshta|rundll32|regsvr32|certutil|bitsadmin|msiexec|wmic|forfiles|curl|bash)\\.exe$",
+
+  "CommandLines": [
+    { "Pattern": "(?i)powershell[^|]*\\s-(e|en|enc|enco|encod|encode|encoded|encodedcommand)\\s+[A-Za-z0-9+/=]{20,}", "Title": "PowerShell with an encoded command", "Sev": "high", "Mitre": "T1059.001", "Why": "Encoded commands hide what a script does. Attackers use them a lot; some management software does too.", "Next": "Decode the Base64 text (Hayabusa extract-base64 or any decoder) and read it." },
+    { "Pattern": "(?i)(downloadstring|downloadfile|net\\.webclient|invoke-webrequest|iwr\\s|start-bitstransfer|invoke-restmethod)[^|]*https?://", "Title": "PowerShell download cradle", "Sev": "high", "Mitre": "T1105", "Why": "The command downloads something from the internet and may run it.", "Next": "Note the URL. Check the file it fetched and the connection in the Network section." },
+    { "Pattern": "(?i)\\b(iex|invoke-expression)\\b", "Title": "PowerShell Invoke-Expression", "Sev": "medium", "Mitre": "T1059.001", "Why": "Runs text as code. Common in loaders, but also in some admin scripts.", "Next": "Read the full command line and its parent process." },
+    { "Pattern": "(?i)powershell[^|]*\\s-(w|win|windowstyle)\\s+hidden|powershell[^|]*\\s-nop\\b.*-(ep|executionpolicy)\\s+bypass", "Title": "PowerShell hidden window or policy bypass", "Sev": "medium", "Mitre": "T1059.001", "Why": "Hiding the window or bypassing the execution policy is unusual for normal use.", "Next": "Check what started it and what it runs." },
+    { "Pattern": "(?i)certutil[^|]*\\s-(urlcache|verifyctl)[^|]*(http|-f)", "Title": "certutil used to download a file", "Sev": "high", "Mitre": "T1105", "Why": "certutil is a certificate tool; downloading with it is a known way to avoid detection.", "Next": "Find the downloaded file and the URL." },
+    { "Pattern": "(?i)bitsadmin[^|]*\\s/transfer", "Title": "bitsadmin transfer", "Sev": "medium", "Mitre": "T1197", "Why": "BITS is used by Windows Update, and also by attackers to download files quietly.", "Next": "Check the source URL and the destination file." },
+    { "Pattern": "(?i)mshta(\\.exe)?\\s+(https?:|vbscript:|javascript:)", "Title": "mshta running remote or inline script", "Sev": "high", "Mitre": "T1218.005", "Why": "mshta can run script from a URL. Rarely legitimate.", "Next": "Note the address or script text." },
+    { "Pattern": "(?i)regsvr32[^|]*\\s/i:(https?:|\\\\\\\\)|regsvr32[^|]*scrobj\\.dll", "Title": "regsvr32 loading a remote scriptlet", "Sev": "high", "Mitre": "T1218.010", "Why": "Known way to run code from a URL without dropping an exe.", "Next": "Note the address and check the parent process." },
+    { "Pattern": "(?i)rundll32[^|]*(javascript:|,RunHTMLApplication)", "Title": "rundll32 running script", "Sev": "high", "Mitre": "T1218.011", "Why": "rundll32 is meant to load DLLs, not run script text.", "Next": "Check the parent process and the command text." },
+    { "Pattern": "(?i)rundll32[^|]*comsvcs(\\.dll)?[^|]*minidump|procdump[^|]*lsass|sqldumper[^|]*lsass", "Title": "Memory dump of LSASS", "Sev": "high", "Mitre": "T1003.001", "Why": "Dumping lsass.exe is the usual way to steal passwords from memory.", "Next": "Treat as credential theft until shown otherwise. Collect memory and the dump file; plan password resets." },
+    { "Pattern": "(?i)sekurlsa|mimikatz|invoke-mimikatz|lsadump::|kerberos::", "Title": "Credential theft tool keywords", "Sev": "high", "Mitre": "T1003", "Why": "These words belong to well-known password-theft tools.", "Next": "Capture memory now; list accounts that were logged on." },
+    { "Pattern": "(?i)vssadmin[^|]*delete\\s+shadows|wmic[^|]*shadowcopy[^|]*delete|bcdedit[^|]*(recoveryenabled\\s+no|bootstatuspolicy\\s+ignoreallfailures)|wbadmin[^|]*delete\\s+(catalog|backup)", "Title": "Backups or recovery being removed", "Sev": "high", "Mitre": "T1490", "Why": "Deleting shadow copies and recovery options is typical right before ransomware encrypts files.", "Next": "Isolate the host from the network if that is your policy, capture memory, and check other machines." },
+    { "Pattern": "(?i)wevtutil(\\.exe)?\\s+(cl|clear-log)\\b|clear-eventlog", "Title": "Event log being cleared", "Sev": "high", "Mitre": "T1070.001", "Why": "Clearing logs hides activity.", "Next": "Check for event 1102 (Security) and 104 (System); collect the logs that remain." },
+    { "Pattern": "(?i)net1?\\s+user\\s+\\S+\\s+\\S*\\s*/add|net1?\\s+localgroup\\s+administrators\\s+\\S+\\s+/add", "Title": "Account created or added to Administrators", "Sev": "high", "Mitre": "T1136.001", "Why": "A new local account or a new administrator can be a way back in.", "Next": "List local users and administrators (Live Hunt accounts section) and compare with what you expect." },
+    { "Pattern": "(?i)schtasks[^|]*\\s/create[^|]*(\\\\temp\\\\|\\\\appdata\\\\|\\\\users\\\\public\\\\|powershell|mshta|wscript|cscript|cmd(\\.exe)?\\s+/c)", "Title": "Scheduled task created that launches a script or temp file", "Sev": "high", "Mitre": "T1053.005", "Why": "A scheduled task is a common way to survive reboots.", "Next": "Read the task in the Persistence section." },
+    { "Pattern": "(?i)\\breg(\\.exe)?\\s+add\\b[^|]*\\\\(run|runonce|winlogon|image file execution options)", "Title": "Autostart registry value being written", "Sev": "medium", "Mitre": "T1547.001", "Why": "Writing a Run key makes a program start at every logon.", "Next": "Check the Run keys section for the new value." },
+    { "Pattern": "(?i)netsh[^|]*advfirewall[^|]*(set\\s+\\w+profile\\s+state\\s+off|firewall\\s+add\\s+rule)|netsh[^|]*portproxy", "Title": "Firewall or port forwarding being changed", "Sev": "medium", "Mitre": "T1562.004", "Why": "Opening a port or forwarding traffic can give remote access or build a tunnel.", "Next": "Compare firewall rules and listening ports." },
+    { "Pattern": "(?i)set-mppreference[^|]*(-disablerealtimemonitoring|-exclusion(path|extension|process))|add-mppreference[^|]*-exclusion", "Title": "Defender being weakened", "Sev": "high", "Mitre": "T1562.001", "Why": "Turning off real-time scanning or adding exclusions protects malware from detection.", "Next": "Check the Defender section for exclusions." },
+    { "Pattern": "(?i)wmic[^|]*process\\s+call\\s+create|wmic[^|]*/node:", "Title": "WMIC creating processes, possibly on another machine", "Sev": "medium", "Mitre": "T1047", "Why": "A known way to run commands remotely.", "Next": "Check for lateral movement on the target machines." },
+    { "Pattern": "(?i)psexec(\\.exe|64\\.exe)?\\s+.*\\\\\\\\|psexesvc|paexec|\\bcsexec\\b", "Title": "Remote execution tool", "Sev": "medium", "Mitre": "T1569.002", "Why": "PsExec-style tools run commands on other computers. Admins use them too.", "Next": "Find who launched it and where it connected." },
+    { "Pattern": "(?i)ntdsutil[^|]*(ifm|snapshot)|esentutl[^|]*/vss|reg(\\.exe)?\\s+save\\s+hklm\\\\(sam|security|system)", "Title": "Credential database copy", "Sev": "high", "Mitre": "T1003.002", "Why": "Copying SAM, SYSTEM or NTDS lets an attacker crack passwords offline.", "Next": "Find where the copy was saved." },
+    { "Pattern": "(?i)icacls[^|]*(/grant\\s+everyone|/grant:r\\s+everyone)|takeown[^|]*/f", "Title": "File permissions being changed", "Sev": "low", "Mitre": "T1222.001", "Why": "Used to take over protected files; also by installers.", "Next": "Check which file was changed." },
+    { "Pattern": "(?i)\\b(7z|7za|rar|winrar)(\\.exe)?\\s+a\\b[^|]*-p\\S+", "Title": "Archive made with a password", "Sev": "low", "Mitre": "T1560.001", "Why": "Password-protected archives are used to stage data before it leaves the network.", "Next": "Find the archive and where it went." }
+  ],
+
+  "Tools": [
+    { "Pattern": "^(mimikatz|mimilib|mimidrv|kekeo|lsassy|pypykatz|nanodump|safetykatz|dumpert|handlekatz)", "Kind": "Credential theft", "Sev": "high", "Mitre": "T1003" },
+    { "Pattern": "^(rubeus|sharphound|bloodhound|adfind|adexplorer_?|ldapdomaindump|kerbrute|certify|sharpview|powerview)", "Kind": "Active Directory attack or recon", "Sev": "high", "Mitre": "T1087" },
+    { "Pattern": "^(cobaltstrike|beacon|brute_?ratel|sliver|havoc|meterpreter|metasploit|msfvenom|covenant|mythic|poshc2|empire|merlin)", "Kind": "Command and control framework", "Sev": "high", "Mitre": "T1071" },
+    { "Pattern": "^(lazagne|sharpchrome|sharpdpapi|browserpasswordview|webbrowserpassview|passwordfox|chromepass|mailpassview|netpass|wirelesskeyview)", "Kind": "Password recovery tool", "Sev": "medium", "Mitre": "T1555" },
+    { "Pattern": "^(psexec|psexec64|psexesvc|paexec|csexec|remcom|winexe|crackmapexec|impacket|smbexec|wmiexec|atexec)", "Kind": "Remote execution", "Sev": "medium", "Mitre": "T1021.002" },
+    { "Pattern": "^(anydesk|teamviewer|tv_w32|tv_x64|screenconnect|connectwise|atera|splashtop|rustdesk|ultraviewer|supremo|aeroadmin|meshagent|action1|dwservice|zohoassist|logmein|radmin|rutserv|rfusclient|ammyy|netsupport|client32)", "Kind": "Remote access software", "Sev": "low", "Mitre": "T1219" },
+    { "Pattern": "^(ngrok|chisel|frpc|frps|plink|revsocks|ligolo|gost|stowaway|iox|cloudflared|bore|localtunnel|dnscat|iodine|ptunnel|sshuttle|socat)", "Kind": "Tunnel or proxy", "Sev": "medium", "Mitre": "T1572" },
+    { "Pattern": "^(rclone|megasync|megacmd|winscp|pscp|psftp|filezilla|cyberduck|gs_?netcat|transfer\\.sh)", "Kind": "Data transfer tool", "Sev": "low", "Mitre": "T1567" },
+    { "Pattern": "^(nmap|masscan|zmap|angryip|advanced_ip_scanner|advanced_port_scanner|netscan|softperfect|nbtscan|fscan|naabu|rustscan)", "Kind": "Network scanner", "Sev": "medium", "Mitre": "T1046" },
+    { "Pattern": "^(procdump|procdump64|sqldumper|dumpit|comsvcs|ntdsutil|sharpsecretsdump|secretsdump)", "Kind": "Memory or credential dumping", "Sev": "medium", "Mitre": "T1003" },
+    { "Pattern": "^(process_?hacker|system_?informer|pc_?hunter|gmer|power_?tool|unlocker|defender_?control|dcontrol|nsudo|advancedrun|pcunlocker|killav|avkiller|backstab|terminator)", "Kind": "Tool that can stop security software", "Sev": "medium", "Mitre": "T1562.001" },
+    { "Pattern": "^(lockbit|conti|ryuk|wannacry|wcry|petya|notpetya|blackcat|alphv|babuk|akira|blackbasta)([_ .0-9-]|$)", "Kind": "Ransomware family name", "Sev": "high", "Mitre": "T1486" }
+  ],
+
+  "NamedPipes": [
+    { "Pattern": "^(msagent_[0-9a-f]{2})", "Title": "Cobalt Strike default pipe (msagent_)", "Sev": "high" },
+    { "Pattern": "^MSSE-\\d{3,4}-server$", "Title": "Cobalt Strike default pipe (MSSE-)", "Sev": "high" },
+    { "Pattern": "^postex_[0-9a-f]{4}$|^postex_ssh_", "Title": "Cobalt Strike post-exploitation pipe", "Sev": "high" },
+    { "Pattern": "^status_[0-9a-f]{2,4}$", "Title": "Cobalt Strike default pipe (status_)", "Sev": "medium" },
+    { "Pattern": "^(PSEXESVC|csexecsvc|paexec_|remcom_|winexesvc)", "Title": "Remote execution service pipe", "Sev": "medium" },
+    { "Pattern": "^(mimikatz|mimi|lsarpc_?hook)", "Title": "Credential theft tool pipe", "Sev": "high" },
+    { "Pattern": "^(meterpreter|msf-pipe|metasploit)", "Title": "Metasploit pipe", "Sev": "high" }
+  ],
+
+  "HostsSensitive": "(?i)(microsoft|windowsupdate|update|defender|kaspersky|symantec|norton|mcafee|eset|avast|avira|bitdefender|sophos|trendmicro|malwarebytes|crowdstrike|sentinelone|virustotal|sysinternals|google|github)",
+
+  "StandardSecurityPackages": ["kerberos", "msv1_0", "schannel", "wdigest", "tspkg", "pku2u", "cloudap", "negoexts", "livessp", "credssp", "\"\"", ""],
+  "StandardAuthPackages": ["msv1_0", ""],
+  "StandardNotificationPackages": ["scecli", "rassfm", ""],
+
+  "PublicDns": ["8.8.8.8", "8.8.4.4", "1.1.1.1", "1.0.0.1", "9.9.9.9", "149.112.112.112", "208.67.222.222", "208.67.220.220"],
+
+  "LogChannels": [
+    { "Name": "Security", "Use": "Logons, account changes, process creation if auditing is on", "Admin": true },
+    { "Name": "System", "Use": "Service installs (7045), log cleared (104), shutdowns", "Admin": false },
+    { "Name": "Application", "Use": "Application and antivirus messages", "Admin": false },
+    { "Name": "Microsoft-Windows-PowerShell/Operational", "Use": "Script block text (4104)", "Admin": false },
+    { "Name": "Microsoft-Windows-Sysmon/Operational", "Use": "Sysmon (only if installed)", "Admin": false },
+    { "Name": "Microsoft-Windows-Windows Defender/Operational", "Use": "Detections and protection changes", "Admin": false },
+    { "Name": "Microsoft-Windows-TaskScheduler/Operational", "Use": "Scheduled task activity (if enabled)", "Admin": false },
+    { "Name": "Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational", "Use": "Incoming RDP (1149)", "Admin": false },
+    { "Name": "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational", "Use": "RDP session logon/logoff", "Admin": false },
+    { "Name": "Microsoft-Windows-WinRM/Operational", "Use": "PowerShell remoting", "Admin": false },
+    { "Name": "Microsoft-Windows-WMI-Activity/Operational", "Use": "WMI activity and subscriptions", "Admin": false }
+  ]
+}

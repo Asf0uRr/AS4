@@ -1,0 +1,5 @@
+# format example only (RFC 5737 / example.com documentation values - not real threat data)
+203.0.113.10
+example-c2.example.com
+http://example.invalid/payload.bin
+C:\Users\Public\evil.exe

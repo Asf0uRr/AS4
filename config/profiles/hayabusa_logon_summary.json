@@ -1,0 +1,8 @@
+﻿{
+    "Name":  "Logon summary",
+    "Description":  "Successful and failed logons per user and computer (two CSV files).",
+    "Command":  "logon-summary",
+    "Options":  {
+                    "utc":  true
+                }
+}

@@ -1,0 +1,11 @@
+﻿{
+    "Name":  "Quick Triage",
+    "Description":  "Fast high-value collection (SANS triage set).",
+    "Live":  true,
+    "Targets":  [
+                    "!SANS_Triage"
+                ],
+    "Modules":  [
+
+                ]
+}

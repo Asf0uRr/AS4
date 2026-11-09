@@ -1,0 +1,328 @@
+﻿[
+    {
+        "Id":  "hayabusa",
+        "Name":  "Hayabusa",
+        "Folder":  "Hayabusa",
+        "Patterns":  [
+                         "hayabusa-*-win-x64.exe",
+                         "hayabusa-*-win-x86.exe"
+                     ],
+        "License":  "AGPL-3.0 (Yamato Security); rules under DRL 1.1",
+        "Redistribution":  "Allowed under AGPL-3.0 with licence text and source offer",
+        "Source":  "https://github.com/Yamato-Security/hayabusa/releases",
+        "Notes":  "Windows event log fast forensics timeline and threat hunting. Rules and config sit beside the executable.",
+        "Required":  false
+    },
+    {
+        "Id":  "chainsaw",
+        "Name":  "Chainsaw",
+        "Folder":  "Chainsaw",
+        "Patterns":  [
+                         "chainsaw_x86_64-pc-windows-msvc.exe",
+                         "chainsaw.exe"
+                     ],
+        "License":  "GPL-3.0 (WithSecure Labs)",
+        "Redistribution":  "Allowed under GPL-3.0 with licence text and source offer",
+        "Source":  "https://github.com/WithSecureLabs/chainsaw/releases",
+        "Notes":  "EVTX and Sigma hunting. Rules, Sigma and mappings sit beside the executable.",
+        "Required":  false
+    },
+    {
+        "Id":  "kape",
+        "Name":  "KAPE (Kroll)",
+        "Folder":  "KAPE",
+        "Patterns":  [
+                         "kape.exe"
+                     ],
+        "License":  "Kroll proprietary, not redistributable",
+        "Redistribution":  "No. Licence is Kroll proprietary; keep it for your own use.",
+        "Source":  "https://www.kroll.com/en/services/cyber-risk/incident-response-litigation-support/kroll-artifact-parser-extractor-kape",
+        "Notes":  "Targets and Modules folders must sit beside kape.exe.",
+        "Required":  false
+    },
+    {
+        "Id":  "winpmem",
+        "Name":  "WinPmem",
+        "Folder":  "MemoryAcquisition",
+        "Patterns":  [
+                         "winpmem_mini_x64*.exe",
+                         "go-winpmem*.exe"
+                     ],
+        "License":  "Apache-2.0 (Velocidex)",
+        "Redistribution":  "Allowed, keep the licence",
+        "Source":  "https://github.com/Velocidex/WinPmem/releases",
+        "Notes":  "Physical memory acquisition. AS4 shows the tool help before running.",
+        "Required":  false
+    },
+    {
+        "Id":  "ftkimager",
+        "Name":  "FTK Imager",
+        "Folder":  "DiskForensics",
+        "Patterns":  [
+                         "FTK Imager.exe"
+                     ],
+        "License":  "Exterro proprietary freeware",
+        "Redistribution":  "Check Exterro terms (registration form)",
+        "Source":  "https://www.exterro.com/digital-forensics-software/ftk-imager",
+        "Notes":  "FTK Imager 3.4.3.3 (64-bit, portable). Needs administrator. Memory: File \u003e Capture Memory. Disk image: File \u003e Create Disk Image.",
+        "Required":  false
+    },
+    {
+        "Id":  "ftkimager-cli",
+        "Name":  "FTK Imager CLI",
+        "Folder":  "DiskForensics",
+        "Patterns":  [
+                         "ftkimager.exe"
+                     ],
+        "License":  "Exterro proprietary freeware",
+        "Redistribution":  "Check Exterro terms",
+        "Source":  "https://www.exterro.com/digital-forensics-software/ftk-imager",
+        "Notes":  "Optional command-line disk imaging.",
+        "Required":  false
+    },
+    {
+        "Id":  "volatility3",
+        "Name":  "Volatility 3",
+        "Folder":  "Volatility3",
+        "Patterns":  [
+                         "vol.exe"
+                     ],
+        "License":  "Volatility Software License",
+        "Redistribution":  "See licence",
+        "Source":  "https://github.com/volatilityfoundation/volatility3/releases",
+        "Notes":  "Prebuilt Windows executables. Symbol pack in tools\\Volatility3\\symbols for offline analysis.",
+        "Required":  false
+    },
+    {
+        "Id":  "yara",
+        "Name":  "YARA",
+        "Folder":  "YARA",
+        "Patterns":  [
+                         "yara64.exe",
+                         "yara.exe"
+                     ],
+        "License":  "BSD-3-Clause (VirusTotal)",
+        "Redistribution":  "Allowed",
+        "Source":  "https://github.com/VirusTotal/yara/releases",
+        "Notes":  "Rule files go in config\\rules\\yara.",
+        "Required":  false
+    },
+    {
+        "Id":  "autorunsc",
+        "Name":  "Sysinternals Autoruns (autorunsc)",
+        "Folder":  "Sysinternals",
+        "Patterns":  [
+                         "autorunsc64.exe",
+                         "autorunsc.exe"
+                     ],
+        "License":  "Microsoft Sysinternals Software License",
+        "Redistribution":  "Not for third-party redistribution",
+        "Source":  "https://learn.microsoft.com/sysinternals/downloads/autoruns",
+        "Notes":  "Persistence enumeration.",
+        "Required":  false
+    },
+    {
+        "Id":  "sigcheck",
+        "Name":  "Sysinternals Sigcheck",
+        "Folder":  "Sysinternals",
+        "Patterns":  [
+                         "sigcheck64.exe"
+                     ],
+        "License":  "Microsoft Sysinternals Software License",
+        "Redistribution":  "Not for third-party redistribution",
+        "Source":  "https://learn.microsoft.com/sysinternals/downloads/sigcheck",
+        "Notes":  "Signatures and hashes.",
+        "Required":  false
+    },
+    {
+        "Id":  "handle",
+        "Name":  "Sysinternals Handle",
+        "Folder":  "Sysinternals",
+        "Patterns":  [
+                         "handle64.exe"
+                     ],
+        "License":  "Microsoft Sysinternals Software License",
+        "Redistribution":  "Not for third-party redistribution",
+        "Source":  "https://learn.microsoft.com/sysinternals/downloads/handle",
+        "Notes":  "Open handles.",
+        "Required":  false
+    },
+    {
+        "Id":  "listdlls",
+        "Name":  "Sysinternals ListDLLs",
+        "Folder":  "Sysinternals",
+        "Patterns":  [
+                         "Listdlls64.exe"
+                     ],
+        "License":  "Microsoft Sysinternals Software License",
+        "Redistribution":  "Not for third-party redistribution",
+        "Source":  "https://learn.microsoft.com/sysinternals/downloads/listdlls",
+        "Notes":  "Loaded modules.",
+        "Required":  false
+    },
+    {
+        "Id":  "pstools",
+        "Name":  "Sysinternals PsTools (pslist)",
+        "Folder":  "Sysinternals",
+        "Patterns":  [
+                         "pslist64.exe"
+                     ],
+        "License":  "Microsoft Sysinternals Software License",
+        "Redistribution":  "Not for third-party redistribution",
+        "Source":  "https://learn.microsoft.com/sysinternals/downloads/pstools",
+        "Notes":  "Process listing.",
+        "Required":  false
+    },
+    {
+        "Id":  "tcpview",
+        "Name":  "Sysinternals TCPView (tcpvcon)",
+        "Folder":  "Sysinternals",
+        "Patterns":  [
+                         "tcpvcon64.exe"
+                     ],
+        "License":  "Microsoft Sysinternals Software License",
+        "Redistribution":  "Not for third-party redistribution",
+        "Source":  "https://learn.microsoft.com/sysinternals/downloads/tcpview",
+        "Notes":  "Connections with owning process.",
+        "Required":  false
+    },
+    {
+        "Id":  "strings",
+        "Name":  "Sysinternals Strings",
+        "Folder":  "Sysinternals",
+        "Patterns":  [
+                         "strings64.exe"
+                     ],
+        "License":  "Microsoft Sysinternals Software License",
+        "Redistribution":  "Not for third-party redistribution",
+        "Source":  "https://learn.microsoft.com/sysinternals/downloads/strings",
+        "Notes":  "String extraction.",
+        "Required":  false
+    },
+    {
+        "Id":  "gkape",
+        "Name":  "KAPE GUI (gkape)",
+        "Folder":  "KAPE",
+        "Patterns":  [
+                         "gkape.exe"
+                     ],
+        "License":  "Kroll proprietary",
+        "Redistribution":  "Check vendor licence",
+        "Source":  "https://www.kroll.com",
+        "Notes":  "Graphical front end for KAPE.",
+        "Required":  false,
+        "Launch":  true
+    },
+    {
+        "Id":  "ramcapturer",
+        "Name":  "Belkasoft RAM Capturer",
+        "Folder":  "MemoryAcquisition",
+        "Patterns":  [
+                         "RamCapture64.exe"
+                     ],
+        "License":  "Belkasoft freeware",
+        "Redistribution":  "Check vendor licence",
+        "Source":  "https://belkasoft.com/ram-capturer",
+        "Notes":  "Alternative memory capture (GUI). Needs administrator.",
+        "Required":  false,
+        "Launch":  true
+    },
+    {
+        "Id":  "networkminer",
+        "Name":  "NetworkMiner",
+        "Folder":  "Other",
+        "Patterns":  [
+                         "NetworkMiner.exe"
+                     ],
+        "License":  "Netresec (free edition)",
+        "Redistribution":  "Check vendor licence",
+        "Source":  "https://www.netresec.com/?page=NetworkMiner",
+        "Notes":  "PCAP analysis.",
+        "Required":  false,
+        "Launch":  true
+    },
+    {
+        "Id":  "lastactivityview",
+        "Name":  "LastActivityView",
+        "Folder":  "Other",
+        "Patterns":  [
+                         "LastActivityView.exe"
+                     ],
+        "License":  "NirSoft freeware",
+        "Redistribution":  "Check vendor licence",
+        "Source":  "https://www.nirsoft.net",
+        "Notes":  "Recent user activity viewer.",
+        "Required":  false,
+        "Launch":  true
+    },
+    {
+        "Id":  "shadowcopyview",
+        "Name":  "ShadowCopyView",
+        "Folder":  "Other",
+        "Patterns":  [
+                         "ShadowCopyView.exe"
+                     ],
+        "License":  "NirSoft freeware",
+        "Redistribution":  "Check vendor licence",
+        "Source":  "https://www.nirsoft.net",
+        "Notes":  "Browse volume shadow copies.",
+        "Required":  false,
+        "Launch":  true
+    },
+    {
+        "Id":  "regscanner",
+        "Name":  "RegScanner",
+        "Folder":  "Other",
+        "Patterns":  [
+                         "RegScanner.exe"
+                     ],
+        "License":  "NirSoft freeware",
+        "Redistribution":  "Check vendor licence",
+        "Source":  "https://www.nirsoft.net",
+        "Notes":  "Registry search.",
+        "Required":  false,
+        "Launch":  true
+    },
+    {
+        "Id":  "dnsquerysniffer",
+        "Name":  "DNSQuerySniffer",
+        "Folder":  "Other",
+        "Patterns":  [
+                         "DNSQuerySniffer.exe"
+                     ],
+        "License":  "NirSoft freeware",
+        "Redistribution":  "Check vendor licence",
+        "Source":  "https://www.nirsoft.net",
+        "Notes":  "Live DNS query viewer.",
+        "Required":  false,
+        "Launch":  true
+    },
+    {
+        "Id":  "exiftool",
+        "Name":  "ExifTool",
+        "Folder":  "Other",
+        "Patterns":  [
+                         "exiftool.exe"
+                     ],
+        "License":  "Perl Artistic / GPL",
+        "Redistribution":  "Check vendor licence",
+        "Source":  "https://exiftool.org",
+        "Notes":  "File metadata (command line).",
+        "Required":  false,
+        "Launch":  false
+    },
+    {
+        "Id":  "arsenal",
+        "Name":  "Arsenal Image Mounter",
+        "Folder":  "Other",
+        "Patterns":  [
+                         "ArsenalImageMounter.exe"
+                     ],
+        "License":  "Arsenal Recon EULA (free version)",
+        "Redistribution":  "Check vendor licence",
+        "Source":  "https://arsenalrecon.com",
+        "Notes":  "Mount forensic images for KAPE. Installs a driver: use on the analyst workstation.",
+        "Required":  false,
+        "Launch":  true
+    }
+]
