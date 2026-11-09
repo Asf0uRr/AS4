@@ -16,7 +16,7 @@ $global:CaseFolders = [ordered]@{
     Meta='00_Metadata'; Sys='01_System_Info'; Net='02_Network'; Proc='03_Processes_Services'
     Auth='04_Users_Authentication'; Evtx='05_Event_Logs'; Kape='06_KAPE'; Mem='07_Memory'
     Disk='08_Disk'; Persist='09_Persistence'; Art='10_Artifacts'; Chain='11_Chainsaw_Analysis'; Hay='11_Hayabusa_Analysis'
-    Rep='12_Reports'; Logs='13_Collection_Logs'; Live='14_Live_Analysis'
+    Rep='12_Reports'; Logs='13_Collection_Logs'; Live='14_Live_Analysis'; Parsed='15_Parsed'
 }
 
 

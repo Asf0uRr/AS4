@@ -605,7 +605,7 @@ function Start-As4Gui {
         '@Acquire' = $null
         'Memory' = { Build-MemoryPage }; 'Disk Image' = { Build-DiskImagePage }
         '@Analyze' = $null
-        'Live Hunt' = { Build-LiveHunt }
+        'Live Hunt' = { Build-LiveHunt }; 'Parse Files' = { Build-ParsePage }
         'Quick Scan' = { Build-QuickScanPage }; 'Hayabusa' = { Build-HayabusaPage }; 'Hayabusa Advanced' = { Build-HayabusaAdvancedPage }; 'Chainsaw' = { Build-ChainsawPage }; 'KAPE' = { Build-KapePage }; 'IOC, YARA, Timeline' = { Build-AnalysisPage }
         '@Case' = $null
         'Report and Integrity' = { Build-ReportPage }; 'Tools' = { Build-ToolsPage }

@@ -4,7 +4,7 @@ param([string]$Root, [string]$ResultFile)
 $ErrorActionPreference = 'Continue'
 $root0 = Split-Path -Parent $PSScriptRoot; $app = Join-Path $root0 'app'; $tasksDir = Join-Path $root0 'tasks'
 if (-not $Root) { $Root = $root0 }
-. (Join-Path $app 'Core.ps1'); foreach ($f in 'QuickResponse', 'Persistence', 'EventLogs', 'Artifacts', 'Hayabusa', 'QuickScan', 'Chainsaw', 'Kape', 'Memory', 'Yara', 'IocSearch', 'Timeline', 'Integrity', 'Report', 'LiveHunt', 'LiveReport', 'LiveWatch', 'Scenarios') { . (Join-Path $tasksDir "$f.ps1") }
+. (Join-Path $app 'Core.ps1'); foreach ($f in 'QuickResponse', 'Persistence', 'EventLogs', 'Artifacts', 'Hayabusa', 'QuickScan', 'Chainsaw', 'Kape', 'Memory', 'Yara', 'IocSearch', 'Timeline', 'Integrity', 'Report', 'LiveHunt', 'LiveReport', 'LiveWatch', 'Scenarios', 'Parsers') { . (Join-Path $tasksDir "$f.ps1") }
 Initialize-As4 -Root $Root
 $global:R = New-Object Collections.ArrayList
 function T { param($id, $name, [scriptblock]$body)
@@ -329,6 +329,21 @@ T 'SC02' 'First Response runs a scenario in order and ends with the Live Hunt an
     Assert ($r.Hunt -and $r.Hunt.Verdict) 'hunt'; Assert ($r.Report -and (Test-Path -LiteralPath $r.Report.Html)) 'report'; Assert (@($r.Results | Where-Object Name -eq 'Snapshot').Count -eq 1) 'snapshot'
     $bad = @($r.Results | Where-Object { $_.Status -in 'FAILED', 'TIMEOUT' -and $_.TaskId -notin 'query_user' }); Assert ($bad.Count -eq 0) (($bad | ForEach-Object { "$($_.Name)=$($_.Status)" }) -join ', ')
     "$(@($r.Results).Count) steps"
+}
+T 'PS01' 'Parsers: shortcut files, jump lists and an event log in the case become CSV; parsers with nothing to read are SKIPPED, not faked' {
+    $d = Join-Path (Get-CaseFolder 'Art') 'parse_test'; New-Item -ItemType Directory $d -Force | Out-Null
+    $rec = Join-Path $env:APPDATA 'Microsoft\Windows\Recent'; $lnk = @(Get-ChildItem $rec -Filter *.lnk -File -ErrorAction SilentlyContinue | Select-Object -First 5)
+    if (-not $lnk.Count) { return 'BLOCKED: no shortcut files on this machine to use as input' }
+    foreach ($f in $lnk) { Copy-Item -LiteralPath $f.FullName $d -Force }
+    $jl = @(Get-ChildItem (Join-Path $rec 'AutomaticDestinations') -File -ErrorAction SilentlyContinue | Select-Object -First 3); foreach ($f in $jl) { Copy-Item -LiteralPath $f.FullName $d -Force }
+    $ev = Join-Path $d 'WinRM.evtx'; & wevtutil.exe epl 'Microsoft-Windows-WinRM/Operational' $ev 2>$null
+    $r = @(Invoke-As4Parsers -Ids 'lnk', 'jumplists', 'evtx', 'prefetch', 'amcache')
+    $by = @{}; foreach ($x in $r) { $by[$x.TaskId] = $x }
+    Assert ($by['parse_lnk'].Status -eq 'OK') "lnk: $($by['parse_lnk'].Status) $(@($by['parse_lnk'].Notes) -join ' ') $(@($by['parse_lnk'].Warnings) -join ' ')"
+    $csv = @(Get-ChildItem (Join-Path $global:Case.Dir '15_Parsed') -Recurse -Filter *.csv | Where-Object { $_.Length -gt 0 }); Assert ($csv.Count -ge 1) 'no csv written'
+    Assert ($by['parse_prefetch'].Status -eq 'SKIPPED' -and $by['parse_amcache'].Status -eq 'SKIPPED') 'empty inputs must be SKIPPED'
+    $led = Import-Csv (Join-Path $global:Case.Dir '00_Metadata\hashes.csv'); Assert (@($led | Where-Object { $_.RelativePath -like '15_Parsed*' -and $_.Kind -eq 'derived' }).Count -ge 1) 'parsed files not in ledger as derived'
+    "lnk=$($by['parse_lnk'].Status) jumplists=$($by['parse_jumplists'].Status) evtx=$($by['parse_evtx'].Status); $($csv.Count) csv"
 }
 T 'SE01' 'AS4 leaves its own footprint out: matches on its folder, scripts and bundled tools are dropped from Quick Scan, Hayabusa findings, Live Hunt and Prefetch; ordinary activity is kept' {
     Assert (Test-As4SelfText "C:\x\cmd.exe /c $($global:P.Root)\tools\Hayabusa\hayabusa.exe csv-timeline") 'root path'; Assert (Test-As4SelfText 'ScriptBlock: function Get-LhIndicators {') 'marker'; Assert (-not (Test-As4SelfText 'powershell -enc AAAA from C:\Users\x\Downloads\evil.ps1')) 'ordinary text must stay'

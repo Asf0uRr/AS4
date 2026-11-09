@@ -120,3 +120,28 @@ function Build-FirstResponsePage {
     }
     $p
 }
+
+function Build-ParsePage {
+    $p = NPanel; foreach ($c in (NHeading 'Parse Collected Files' 'Turns what you collected into spreadsheets you can read: Prefetch, Amcache, Shimcache, shortcuts, Jump Lists, Recycle Bin, SRUM, the file table and event logs. It reads files already inside this case, never the live machine, and saves CSV in 15_Parsed.')) { $p.Controls.Add($c) }
+    $cl = NCheckList 20 100 640 300; $p.Controls.Add($cl)
+    $info = NLabel '' 680 100 330 140 $global:C.Dim (F 9); $p.Controls.Add($info)
+    $br = NButton 'Parse selected' 680 250 160 34 $true 'Runs the bundled parsers on the matching files in this case.'; $p.Controls.Add($br)
+    $ba = NButton 'Select all' 850 250 100 34; $p.Controls.Add($ba)
+    $bo = NButton 'Open results folder' 680 294 200 32; $p.Controls.Add($bo)
+    $state = @{ P = @() }
+    $refresh = {
+        $cl.Items.Clear(); $state.P = @(Get-As4Parsers); $lines = @()
+        if (-not $global:Case) { $info.Text = 'No case is open.'; return }
+        foreach ($x in $state.P) { $t = Get-As4Tool $x.Tool; $n = 0; try { $n = @(& $x.Find).Count } catch {}
+            $tag = if (-not $t -or -not $t.Path) { 'parser missing' } elseif ($n) { "$n found" } else { 'nothing to parse yet' }
+            [void]$cl.Items.Add(("{0}   [{1}]" -f $x.Name, $tag), [bool]($n -and $t -and $t.Path)) }
+        $info.Text = "Tick what to parse. Items say how many matching files or folders this case holds.`r`n`r`nCollect first (Artifacts, Event Logs or KAPE), then parse." }.GetNewClosure()
+    $p.Add_VisibleChanged({ if ($p.Visible) { & $refresh } }.GetNewClosure())
+    $ba.Add_Click({ for ($i = 0; $i -lt $cl.Items.Count; $i++) { $cl.SetItemChecked($i, $true) } }.GetNewClosure())
+    $br.Add_Click({ $ids = @(); for ($i = 0; $i -lt $cl.Items.Count; $i++) { if ($cl.GetItemChecked($i)) { $ids += $state.P[$i].Id } }
+        if (-not $ids.Count) { Gui-Msg 'Tick at least one item.'; return }
+        if (-not (Gui-Confirm "Parse $($ids.Count) item(s)?`r`nThey read files inside this case only and write CSV to 15_Parsed.")) { return }
+        Gui-Run { Gui-ShowResults (Invoke-As4Parsers -Ids $ids -OnProgress { param($i, $n, $m) Gui-Progress $i $n $m }) } 'Parsing'; & $refresh }.GetNewClosure())
+    $bo.Add_Click({ Start-Process explorer.exe -ArgumentList (ConvertTo-ArgString @((Get-CaseFolder 'Parsed'))) })
+    $p
+}

@@ -52,3 +52,16 @@ function Menu-LiveHunt {
     catch { Write-Host $_.Exception.Message -ForegroundColor Red }
     Read-Host 'Enter' | Out-Null
 }
+
+function Menu-Parse {
+    if (-not (Require-Case)) { return }
+    $ps = @(Get-As4Parsers)
+    Show-Banner; Write-Host '== Parse collected files ==' -ForegroundColor Cyan
+    Write-Host '  Turns collected artifacts into CSV (15_Parsed). Reads files inside this case only.' -ForegroundColor Gray
+    $i = 0; foreach ($x in $ps) { $i++; $t = Get-As4Tool $x.Tool; $n = 0; try { $n = @(& $x.Find).Count } catch {}; $tag = 'nothing to parse yet'; if (-not $t.Path) { $tag = 'parser missing' } elseif ($n) { $tag = "$n found" }; Write-Host ('{0,3}. {1}   [{2}]' -f $i, $x.Name, $tag) }
+    Write-Host '  A = all   number list e.g. 1,3   B = back'
+    $in = Read-Host 'Select'; if ($in -match '^(b|back)$') { return }
+    try { $sel = if ($in -match '^(a|all)$') { $ps } else { Convert-Selection $in $ps.Count | ForEach-Object { $ps[$_ - 1] } }
+        $r = Invoke-As4Parsers -Ids @($sel | ForEach-Object { $_.Id }) -OnProgress { param($i, $n, $m) Write-Host "  [$i/$n] $m" -ForegroundColor Cyan }; Show-ResultTable $r } catch { Write-Host $_.Exception.Message -ForegroundColor Red }
+    Read-Host 'Enter' | Out-Null
+}

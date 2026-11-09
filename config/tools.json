@@ -1,4 +1,4 @@
-﻿[
+[
     {
         "Id":  "hayabusa",
         "Name":  "Hayabusa",
@@ -322,6 +322,218 @@
         "Redistribution":  "Check vendor licence",
         "Source":  "https://arsenalrecon.com",
         "Notes":  "Mount forensic images for KAPE. Installs a driver: use on the analyst workstation.",
+        "Required":  false,
+        "Launch":  true
+    },
+    {
+        "Id":  "ez-pecmd",
+        "Name":  "EZ PECmd (Prefetch)",
+        "Folder":  "Zimmerman",
+        "Patterns":  [
+                         "PECmd.exe"
+                     ],
+        "License":  "Eric Zimmerman (free to use; check the author terms before redistributing)",
+        "Redistribution":  "Not redistributed by AS4; obtain from the author",
+        "Source":  "https://ericzimmerman.github.io",
+        "Notes":  "Parses Prefetch files to CSV (what ran and when).",
+        "Required":  false
+    },
+    {
+        "Id":  "ez-amcache",
+        "Name":  "EZ AmcacheParser",
+        "Folder":  "Zimmerman",
+        "Patterns":  [
+                         "AmcacheParser.exe"
+                     ],
+        "License":  "Eric Zimmerman (free to use; check the author terms before redistributing)",
+        "Redistribution":  "Not redistributed by AS4; obtain from the author",
+        "Source":  "https://ericzimmerman.github.io",
+        "Notes":  "Parses Amcache.hve to CSV.",
+        "Required":  false
+    },
+    {
+        "Id":  "ez-appcompat",
+        "Name":  "EZ AppCompatCacheParser (Shimcache)",
+        "Folder":  "Zimmerman",
+        "Patterns":  [
+                         "AppCompatCacheParser.exe"
+                     ],
+        "License":  "Eric Zimmerman (free to use; check the author terms before redistributing)",
+        "Redistribution":  "Not redistributed by AS4; obtain from the author",
+        "Source":  "https://ericzimmerman.github.io",
+        "Notes":  "Parses Shimcache from a SYSTEM hive.",
+        "Required":  false
+    },
+    {
+        "Id":  "ez-lecmd",
+        "Name":  "EZ LECmd (LNK files)",
+        "Folder":  "Zimmerman",
+        "Patterns":  [
+                         "LECmd.exe"
+                     ],
+        "License":  "Eric Zimmerman (free to use; check the author terms before redistributing)",
+        "Redistribution":  "Not redistributed by AS4; obtain from the author",
+        "Source":  "https://ericzimmerman.github.io",
+        "Notes":  "Parses shortcut files.",
+        "Required":  false
+    },
+    {
+        "Id":  "ez-jlecmd",
+        "Name":  "EZ JLECmd (Jump Lists)",
+        "Folder":  "Zimmerman",
+        "Patterns":  [
+                         "JLECmd.exe"
+                     ],
+        "License":  "Eric Zimmerman (free to use; check the author terms before redistributing)",
+        "Redistribution":  "Not redistributed by AS4; obtain from the author",
+        "Source":  "https://ericzimmerman.github.io",
+        "Notes":  "Parses Jump Lists.",
+        "Required":  false
+    },
+    {
+        "Id":  "ez-mftecmd",
+        "Name":  "EZ MFTECmd ($MFT, $J)",
+        "Folder":  "Zimmerman",
+        "Patterns":  [
+                         "MFTECmd.exe"
+                     ],
+        "License":  "Eric Zimmerman (free to use; check the author terms before redistributing)",
+        "Redistribution":  "Not redistributed by AS4; obtain from the author",
+        "Source":  "https://ericzimmerman.github.io",
+        "Notes":  "Parses $MFT and the USN journal.",
+        "Required":  false
+    },
+    {
+        "Id":  "ez-rbcmd",
+        "Name":  "EZ RBCmd (Recycle Bin)",
+        "Folder":  "Zimmerman",
+        "Patterns":  [
+                         "RBCmd.exe"
+                     ],
+        "License":  "Eric Zimmerman (free to use; check the author terms before redistributing)",
+        "Redistribution":  "Not redistributed by AS4; obtain from the author",
+        "Source":  "https://ericzimmerman.github.io",
+        "Notes":  "Parses Recycle Bin $I files.",
+        "Required":  false
+    },
+    {
+        "Id":  "ez-srumecmd",
+        "Name":  "EZ SrumECmd (SRUM)",
+        "Folder":  "Zimmerman",
+        "Patterns":  [
+                         "SrumECmd.exe"
+                     ],
+        "License":  "Eric Zimmerman (free to use; check the author terms before redistributing)",
+        "Redistribution":  "Not redistributed by AS4; obtain from the author",
+        "Source":  "https://ericzimmerman.github.io",
+        "Notes":  "Parses the SRUM database.",
+        "Required":  false
+    },
+    {
+        "Id":  "ez-evtxecmd",
+        "Name":  "EZ EvtxECmd (event logs)",
+        "Folder":  "Zimmerman",
+        "Patterns":  [
+                         "EvtxECmd.exe"
+                     ],
+        "License":  "Eric Zimmerman (free to use; check the author terms before redistributing)",
+        "Redistribution":  "Not redistributed by AS4; obtain from the author",
+        "Source":  "https://ericzimmerman.github.io",
+        "Notes":  "Parses .evtx logs to CSV with maps.",
+        "Required":  false
+    },
+    {
+        "Id":  "ez-recmd",
+        "Name":  "EZ RECmd (registry)",
+        "Folder":  "Zimmerman",
+        "Patterns":  [
+                         "RECmd.exe"
+                     ],
+        "License":  "Eric Zimmerman (free to use; check the author terms before redistributing)",
+        "Redistribution":  "Not redistributed by AS4; obtain from the author",
+        "Source":  "https://ericzimmerman.github.io",
+        "Notes":  "Registry hive queries.",
+        "Required":  false
+    },
+    {
+        "Id":  "regripper",
+        "Name":  "RegRipper",
+        "Folder":  "RegRipper",
+        "Patterns":  [
+                         "rip.exe"
+                     ],
+        "License":  "GPL-3.0 / MIT (see the folder)",
+        "Redistribution":  "Check licence",
+        "Source":  "https://github.com/keydet89/RegRipper3.0",
+        "Notes":  "Registry hive reports through plugins.",
+        "Required":  false
+    },
+    {
+        "Id":  "tsk-fls",
+        "Name":  "The Sleuth Kit (fls)",
+        "Folder":  "SleuthKit",
+        "Patterns":  [
+                         "fls.exe"
+                     ],
+        "License":  "IPL / CPL / GPL (see tools\\SleuthKit\\licenses)",
+        "Redistribution":  "Check licence",
+        "Source":  "https://www.sleuthkit.org",
+        "Notes":  "Command-line disk image analysis (fls, icat, mmls...).",
+        "Required":  false
+    },
+    {
+        "Id":  "magnet-ram",
+        "Name":  "Magnet RAM Capture",
+        "Folder":  "MemoryAcquisition",
+        "Patterns":  [
+                         "MRCv*.exe"
+                     ],
+        "License":  "Magnet Forensics freeware",
+        "Redistribution":  "Not redistributed by AS4",
+        "Source":  "https://www.magnetforensics.com/resources/magnet-ram-capture/",
+        "Notes":  "Memory capture. Needs administrator.",
+        "Required":  false,
+        "Launch":  true
+    },
+    {
+        "Id":  "fulleventlogview",
+        "Name":  "FullEventLogView",
+        "Folder":  "Other",
+        "Patterns":  [
+                         "FullEventLogView.exe"
+                     ],
+        "License":  "NirSoft freeware",
+        "Redistribution":  "Check vendor licence",
+        "Source":  "https://www.nirsoft.net",
+        "Notes":  "Event log viewer.",
+        "Required":  false,
+        "Launch":  true
+    },
+    {
+        "Id":  "winprefetchview",
+        "Name":  "WinPrefetchView",
+        "Folder":  "Other",
+        "Patterns":  [
+                         "WinPrefetchView.exe"
+                     ],
+        "License":  "NirSoft freeware",
+        "Redistribution":  "Check vendor licence",
+        "Source":  "https://www.nirsoft.net",
+        "Notes":  "Prefetch viewer.",
+        "Required":  false,
+        "Launch":  true
+    },
+    {
+        "Id":  "usblogview",
+        "Name":  "USBLogView",
+        "Folder":  "Other",
+        "Patterns":  [
+                         "USBLogView.exe"
+                     ],
+        "License":  "NirSoft freeware",
+        "Redistribution":  "Check vendor licence",
+        "Source":  "https://www.nirsoft.net",
+        "Notes":  "USB device history viewer.",
         "Required":  false,
         "Launch":  true
     }

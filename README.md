@@ -58,6 +58,8 @@ All the rules live in `config/profiles/live_indicators.json`. Something on your 
 
 **Snapshots**: take one, do something, take another, compare. You see what was added, removed or changed. You can also compare with a snapshot from a clean machine.
 
+**Parse Files** turns what you collected into spreadsheets: Prefetch, Amcache, Shimcache, shortcuts, Jump Lists, Recycle Bin, SRUM, the file table and event logs. It reads files already in the case, never the live machine.
+
 **Quick Scan**: got a folder of `.evtx` logs from somewhere else? Point AS4 at it and you get the same kind of verdict.
 
 The usual tools are in there too: live commands, Prefetch, Amcache, browser history, event-log export, memory and disk imaging, KAPE, Hayabusa, Chainsaw, YARA, IOC search and a timeline. Everything is saved with SHA-256 hashes and a log of every command, so you can show exactly what you did.

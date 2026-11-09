@@ -372,13 +372,13 @@ function Start-As4Cli {
         Show-Banner
         Write-Host '   1. Quick Response            8. Hayabusa'; Write-Host '   2. Event Logs                9. Chainsaw'; Write-Host '   3. Artifacts                10. KAPE'
         Write-Host '   4. Persistence triage       11. IOC, YARA, Timeline'; Write-Host '   5. Memory                   12. Report and integrity'; Write-Host '   6. Disk image (FTK Imager)  13. Tools'; Write-Host '   7. Quick Scan (logs: is something wrong?)'
-        Write-Host '  14. First Response (pick the situation)   15. Live Hunt / Watch / Snapshots'; Write-Host '   C. Change case    H. Help    Q. Quit'
+        Write-Host '  14. First Response (pick the situation)   15. Live Hunt / Watch / Snapshots   16. Parse collected files'; Write-Host '   C. Change case    H. Help    Q. Quit'
         switch -Regex (Read-Host 'Select') {
             '^1$' { Invoke-CliTaskPicker 'Quick Response' (Get-As4QuickTasks) 'Built-in Windows commands and read-only queries. Pick items, or Q for the quick set.' }
             '^2$' { Menu-EventLogs } '^3$' { Menu-Artifacts }
             '^4$' { $t = @(Get-As4TriageTasks); Invoke-CliTaskPicker 'Persistence triage' $t 'Collection and heuristic leads only. Nothing is stopped, deleted or removed.'
                     if ((Get-As4Tool 'autorunsc').Path -and (Confirm-Action 'Also run Autoruns? WARNING: it writes an EULA value to the registry of this machine (the only item that does). Skip it on infected or evidence machines.')) { Show-ResultTable @(Invoke-Autoruns); Read-Host 'Enter' | Out-Null } }
-            '^(5|6)$' { Menu-Memory } '^7$' { Menu-QuickScan } '^8$' { Menu-Hayabusa } '^9$' { Menu-Chainsaw } '^10$' { Menu-Kape } '^11$' { Menu-Analysis } '^12$' { Menu-Integrity } '^13$' { Menu-Tools } '^14$' { Menu-FirstResponse } '^15$' { Menu-LiveHunt }
+            '^(5|6)$' { Menu-Memory } '^7$' { Menu-QuickScan } '^8$' { Menu-Hayabusa } '^9$' { Menu-Chainsaw } '^10$' { Menu-Kape } '^11$' { Menu-Analysis } '^12$' { Menu-Integrity } '^13$' { Menu-Tools } '^14$' { Menu-FirstResponse } '^15$' { Menu-LiveHunt } '^16$' { Menu-Parse }
             '^(c|case)$' { [void](Select-CliCase) }
             '^(h|help|\?)$' { Show-Help }
             '^(q|quit|exit)$' { return }

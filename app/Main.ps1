@@ -11,7 +11,7 @@ $appDir = $PSScriptRoot
 if (-not $Root) { $Root = Split-Path -Parent $appDir }
 
 $parts = @((Join-Path $appDir 'Core.ps1'))
-foreach ($f in 'QuickResponse', 'Persistence', 'EventLogs', 'Artifacts', 'Hayabusa', 'QuickScan', 'Chainsaw', 'Kape', 'Memory', 'Yara', 'IocSearch', 'Timeline', 'Integrity', 'Report', 'LiveHunt', 'LiveReport', 'LiveWatch', 'Scenarios') { $parts += (Join-Path $Root "tasks\$f.ps1") }
+foreach ($f in 'QuickResponse', 'Persistence', 'EventLogs', 'Artifacts', 'Hayabusa', 'QuickScan', 'Chainsaw', 'Kape', 'Memory', 'Yara', 'IocSearch', 'Timeline', 'Integrity', 'Report', 'LiveHunt', 'LiveReport', 'LiveWatch', 'Scenarios', 'Parsers') { $parts += (Join-Path $Root "tasks\$f.ps1") }
 $parts += (Join-Path $appDir 'Cli.ps1'); $parts += (Join-Path $appDir 'Gui.ps1'); $parts += (Join-Path $appDir 'GuiLive.ps1'); $parts += (Join-Path $appDir 'CliLive.ps1')
 foreach ($p in $parts) {
     if (-not (Test-Path -LiteralPath $p)) { Write-Host "Missing file: $p" -ForegroundColor Red; exit 2 }
