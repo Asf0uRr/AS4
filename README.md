@@ -1,12 +1,4 @@
-<pre align="center">
-          ▄▄▄▄▄
-        ▄████████▄
-       ▄██████████▀▀▀▀▀▀▶
- ▄▄▄▄▄▄████████████▀
-▀████████████████▀
-   ▀██████████▀
-      ▀██▀ ▀██▀
-</pre>
+<p align="center"><img src="docs/images/logo.png" alt="AS4 IR Tool" width="160"></p>
 
 <h1 align="center">AS4 IR Tool</h1>
 <p align="center"><i>flying without wings</i></p>
@@ -27,6 +19,14 @@ When a machine is acting strange you usually have about ten minutes before someo
 - writes everything down so I can prove later what I did.
 
 No installer. No cloud. No "phone home". It only looks.
+
+## See it
+
+<p align="center"><img src="docs/images/live-hunt.png" alt="Live Hunt: a verdict, the reasons, and every lead with why it matters" width="900"></p>
+<p align="center"><sub>Live Hunt on sample data: a verdict in plain words, why, and every lead with what to do next.</sub></p>
+
+<p align="center"><img src="docs/images/first-response.png" alt="First Response: pick the situation" width="440"> <img src="docs/images/evidence-package.png" alt="Evidence package" width="440"></p>
+<p align="center"><sub>First Response (pick the situation) and the evidence package. Screenshots use made-up names and sample findings.</sub></p>
 
 ## A minute with it
 
