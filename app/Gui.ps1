@@ -153,7 +153,7 @@ function Build-Overview {
     $d.Sum = & $mk 'Operations in this case' 510 210 490 70
     $d.Tools = & $mk 'Tools' 20 290 480 270; $d.Tools.Font = New-Object Drawing.Font('Consolas', 9)
     $n = & $mk 'Notes' 510 290 490 270
-    $n.Text = "Collection is read-only. Nothing is deleted, stopped or quarantined.`r`nNothing is downloaded or installed on the target.`r`nLive commands and memory capture still touch the running system; see docs\EVIDENCE_HANDLING.md.`r`nRule and heuristic matches are leads for review, not conclusions."
+    $n.Text = "Collection is read-only. Nothing is deleted, stopped or quarantined.`r`nNothing is downloaded or installed on the target.`r`nLive commands and memory capture still touch the running system; see the README.`r`nRule and heuristic matches are leads for review, not conclusions."
     $n.ForeColor = $global:C.Dim
     $global:G.Dash = $d; $p }
 
@@ -446,7 +446,7 @@ function Build-ChainsawPage {
 function Build-KapePage {
     $p = NPanel; foreach ($c in (NHeading 'KAPE' 'Targets collect artifacts from a live system or mounted image. Modules process data that was already collected. Only targets and modules found in your KAPE folder are listed.')) { $p.Controls.Add($c) }
     $k = Get-KapeInfo
-    if (-not $k.Present) { $p.Controls.Add((NLabel 'KAPE is not in tools\KAPE. It is distributed by Kroll after a registration form and cannot be bundled by AS4. Copy kape.exe with its Targets and Modules folders into tools\KAPE, then restart the tool. See docs\TOOLS_INVENTORY.md.' 20 90 960 60 $global:C.Warn)); return $p }
+    if (-not $k.Present) { $p.Controls.Add((NLabel 'KAPE is not in tools\KAPE. It is distributed by Kroll after a registration form and cannot be bundled by AS4. Copy kape.exe with its Targets and Modules folders into tools\KAPE, then restart the tool. See tools\README.md.' 20 90 960 60 $global:C.Warn)); return $p }
     $p.Controls.Add((NLabel "KAPE $($k.Version): $($k.Targets.Count) targets, $($k.Modules.Count) modules" 20 84 600 20 $global:C.Ok))
     $p.Controls.Add((NLabel 'Targets' 20 112 200)); $p.Controls.Add((NLabel 'Modules' 360 112 300))
     $tl = NCheckList 20 134 330 400; foreach ($t in $k.Targets) { [void]$tl.Items.Add($t.Name) }; $p.Controls.Add($tl)

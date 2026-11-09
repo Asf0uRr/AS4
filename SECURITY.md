@@ -12,7 +12,7 @@ If you find a way for AS4 to modify, delete or send data from the machine it run
 
 ## What it cannot promise
 
-Running any program changes a live system (new processes, Prefetch entries, event log records). `docs\EVIDENCE_HANDLING.md` lists the limits. Findings are leads for a person to confirm, not proof.
+Running any program changes a live system (new processes, Prefetch entries, event log records). The README lists the limits. Findings are leads for a person to confirm, not proof.
 
 ## Supported versions
 

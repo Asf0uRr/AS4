@@ -31,7 +31,7 @@ function Invoke-Kape {
     $e = New-As4Entry 'kape' 'KAPE collection' $global:CaseFolders.Kape "source $Source"
     Start-As4Run 'kape' | Out-Null; $files = @()
     try {
-        if (-not $k.Present) { $e.Status = 'SKIPPED'; $e.Notes += 'KAPE not found in tools\KAPE. KAPE is licensed software that is not redistributed by AS4; see docs\TOOLS_INVENTORY.md.'; return (Complete-As4Entry $e @()) }
+        if (-not $k.Present) { $e.Status = 'SKIPPED'; $e.Notes += 'KAPE not found in tools\KAPE. KAPE is licensed software that is not redistributed by AS4; see tools\README.md.'; return (Complete-As4Entry $e @()) }
         if (-not $k.Runnable) { $e.Status = 'SKIPPED'; $e.Notes += "KAPE cannot execute: $($k.BlockReason)"; return (Complete-As4Entry $e @()) }
         if (-not (Test-As4Admin)) { $e.Status = 'SKIPPED'; $e.Notes += 'KAPE requires administrator for live collection.'; return (Complete-As4Entry $e @()) }
         if (-not $Targets -and -not $Modules) { throw 'Select at least one Target or Module. AS4 never runs everything automatically.' }

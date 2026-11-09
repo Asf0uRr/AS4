@@ -258,7 +258,7 @@ function Menu-Kape {
     Show-Banner; Write-Host '== KAPE ==' -ForegroundColor Cyan
     Write-Host 'Targets collect artifacts from a source (live "C:" or a mounted image). Modules PROCESS already-collected data. Nothing is run unless you select it.' -ForegroundColor Gray
     $k = Get-KapeInfo
-    if (-not $k.Present) { Write-Host 'KAPE is NOT present in tools\KAPE (licensed; obtain on the analyst workstation - see docs\TOOLS_INVENTORY.md).' -ForegroundColor Yellow; Read-Host 'Enter' | Out-Null; return }
+    if (-not $k.Present) { Write-Host 'KAPE is NOT present in tools\KAPE (licensed; obtain on the analyst workstation - see tools\README.md).' -ForegroundColor Yellow; Read-Host 'Enter' | Out-Null; return }
     Write-Host "KAPE: $($k.Path) version=$($k.Version) targets=$($k.Targets.Count) modules=$($k.Modules.Count)" -ForegroundColor Green
     $profs = @(Get-KapeProfiles); $i = 0; $profs | ForEach-Object { $i++; Write-Host ("  {0}. {1} - {2} (targets: {3}; missing: {4})" -f $i, $_.Name, $_.Description, ($_.Targets -join ','), ($_.MissingTargets -join ',')) }
     Write-Host '  T. pick targets manually   B. back'

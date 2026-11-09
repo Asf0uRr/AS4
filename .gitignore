@@ -9,7 +9,6 @@ tools/*
 
 # Large or mixed-licence rule sets and third-party documents
 config/rules/yara/community/
-docs/*.pdf
 
 # Built files (attach them to a GitHub release instead)
 *.exe

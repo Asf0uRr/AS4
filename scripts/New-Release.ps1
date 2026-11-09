@@ -1,6 +1,6 @@
 <#
  Builds a clean, publishable package: dist\AS4_IR_Tool_<version>.zip + SHA256SUMS.txt
- Included : app, tasks, config (without the community YARA rules), docs, scripts, launcher exes, and the tools whose licences allow redistribution
+ Included : app, tasks, config (without the community YARA rules), licences, images, scripts, launcher exes, and the tools whose licences allow redistribution
             (Hayabusa AGPL-3.0, Chainsaw GPL-3.0 + Sigma DRL, YARA BSD-3, WinPmem Apache-2.0).
  Left out : KAPE, FTK Imager, Sysinternals, Volatility, Belkasoft, NirSoft, NetworkMiner, Arsenal, ExifTool (not redistributable here or not needed),
             every case in output\, test leftovers, the community YARA rule set (mixed or unknown licences), third-party PDFs.
@@ -17,7 +17,7 @@ function Copy-Tree($from, $to, [string[]]$excludeDirs = @(), [string[]]$excludeF
     & robocopy $from $to /E /NFL /NDL /NJH /NJS /NP @xd @xf | Out-Null; if ($LASTEXITCODE -ge 8) { throw "robocopy failed: $from" } }
 
 foreach ($d in 'app', 'tasks', 'scripts') { Copy-Tree (Join-Path $root $d) (Join-Path $pkg $d) }
-Copy-Tree (Join-Path $root 'docs') (Join-Path $pkg 'docs') @() @('*.pdf')
+foreach ($d in 'licenses', 'assets') { Copy-Tree (Join-Path $root $d) (Join-Path $pkg $d) }
 Copy-Tree (Join-Path $root 'config') (Join-Path $pkg 'config') @((Join-Path $root 'config\rules\yara\community')) @('tools_manifest.json')
 foreach ($f in 'README.md', 'LICENSE', 'CHANGELOG.md', 'SECURITY.md', 'AS4_IR_Tool.exe', 'AS4_IR_Tool_Admin.exe', 'AS4_IR_Tool_CLI.exe') { if (Test-Path (Join-Path $root $f)) { Copy-Item (Join-Path $root $f) $pkg } }
 # tools that may be redistributed

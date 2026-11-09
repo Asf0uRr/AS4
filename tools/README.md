@@ -1,6 +1,6 @@
 # tools
 
-Third-party programs AS4 can drive. None of them are part of this repository; each keeps its own licence (see `docs/LICENSES.md`).
+Third-party programs AS4 can drive. None of them are part of this repository; each keeps its own licence (see `licenses/LICENSES.md`).
 
 | Folder | Program | How to get it |
 |---|---|---|

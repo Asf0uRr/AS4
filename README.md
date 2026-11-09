@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/images/hero.png" alt="AS4 IR Tool" width="100%"></p>
+<p align="center"><img src="assets/hero.png" alt="AS4 IR Tool" width="100%"></p>
 
 You get called because a machine is "acting weird". Maybe it's a finance laptop, maybe a server nobody wants to restart. You have a few minutes before somebody pulls the plug, and you are not allowed to install anything on it.
 
@@ -10,15 +10,15 @@ It only looks. It never kills a process, deletes a file, clears a log, changes a
 
 You open it, type a case name, and click **First Response**. Then pick what you think you're dealing with:
 
-<p align="center"><img src="docs/images/first-response.png" alt="First Response" width="88%"></p>
+<p align="center"><img src="assets/first-response.png" alt="First Response" width="88%"></p>
 
 AS4 collects in the order the evidence dies: connections and processes first, then files, then logs. Then it runs the **Live Hunt** and shows you this:
 
-<p align="center"><img src="docs/images/live-hunt.png" alt="Live Hunt" width="88%"></p>
+<p align="center"><img src="assets/live-hunt.png" alt="Live Hunt" width="88%"></p>
 
 A verdict you can read at 3 a.m., the reasons behind it, and a list of leads. Click one:
 
-<p align="center"><img src="docs/images/live-hunt-detail.png" alt="A lead explained" width="88%"></p>
+<p align="center"><img src="assets/live-hunt-detail.png" alt="A lead explained" width="88%"></p>
 
 Each lead says what was seen, why it matters, what to do next, and which MITRE technique it maps to. At the bottom there's a list of what the check could *not* see (no admin, a log that's off, anything that lives only in memory). A tool that only ever says "all clear" is lying to you, so this one tells you where it's blind.
 
@@ -90,7 +90,8 @@ AS4\
   tools\      third-party programs, each one optional (tools\README.md)
   output\     one folder per case
   scripts\    fetch tools, self-test, build the exes and the release
-  docs\
+  assets\     images for this README
+  licenses\   licence texts of the bundled programs
 ```
 
 Case folders are numbered so you can find things half asleep: `01_System_Info`, `02_Network`, ... `12_Reports`, `13_Collection_Logs`, `14_Live_Analysis`.
@@ -105,8 +106,16 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\New-Release.ps1  # d
 
 The release zip carries only what the licences allow: Hayabusa, Chainsaw, YARA, WinPmem and the Microsoft runtime DLLs. KAPE, FTK Imager and the Sysinternals tools are yours to add (`tools\README.md` says how). Every tool is optional; Live Hunt, Live Watch, Snapshots and First Response need none of them.
 
-More: [Quick start](docs/QUICK_START.md) · [Live analysis](docs/LIVE_ANALYSIS.md) · [Evidence handling](docs/EVIDENCE_HANDLING.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) · [Licences](docs/LICENSES.md)
+## When something goes wrong
+
+- **Windows blocks the exe** (Smart App Control, WDAC, SmartScreen): the exes are unsigned launchers. Use `scripts\Start-Without-Exe.cmd`, or sign them with your own certificate.
+- **Lots of items say SKIPPED, "requires administrator":** start `AS4_IR_Tool_Admin.exe`.
+- **A tool says a DLL is missing** (`mfc100u.dll`, `VCRUNTIME140.dll`): AS4 copies the right runtime from `tools\_runtimed` next to the tool on first use. `-Check` shows if anything is still missing.
+- **KAPE, FTK Imager, Volatility or Sysinternals show MISSING:** they aren't redistributable. `tools\README.md` says how to add them. Everything else works without them.
+- **`output\ writable: FAIL`:** the drive is read-only or write-blocked. Use a writable one.
+- **`query user` says FAILED (exit 1):** Windows returns 1 when there is no session to list. Harmless.
+- **Where are the logs?** `output\<case>_Collection_Logs\` (`session.log` and `manifest.jsonl`).
 
 ## Licence
 
-MIT for the AS4 code (`LICENSE`). Bundled programs keep their own licences. Only use it on systems you're allowed to examine.
+MIT for the AS4 code (`LICENSE`). Bundled programs keep their own licences (texts in `licenses`). Only use it on systems you're allowed to examine.

@@ -28,7 +28,7 @@ function Invoke-MemoryAcquisition {
     $e = New-As4Entry 'memory_acquisition' "Memory acquisition ($ToolId)" $global:CaseFolders.Mem
     Start-As4Run 'memory' | Out-Null; $files = @()
     try {
-        if (-not $t -or -not $t.Path) { $e.Status = 'SKIPPED'; $e.Notes += "$ToolId binary not found under tools\. AS4 will not download it; see docs\TOOLS_INVENTORY.md."; return (Complete-As4Entry $e @()) }
+        if (-not $t -or -not $t.Path) { $e.Status = 'SKIPPED'; $e.Notes += "$ToolId binary not found under tools\. AS4 will not download it; see tools\README.md."; return (Complete-As4Entry $e @()) }
         if ($t.Status -eq 'PRESENT_HASH_MISMATCH') { $e.Status = 'SKIPPED'; $e.Notes += 'Binary hash does not match the recorded manifest - refusing to run unverified acquisition binary.'; return (Complete-As4Entry $e @()) }
         if ($t.Status -eq 'PRESENT_UNVERIFIED') { $e.Warnings += 'Binary is not registered in config\tools_manifest.json (provenance unverified). Register it with scripts\Prepare-Tools.ps1 on the analyst workstation.' }
         if (-not (Test-As4Admin)) { $e.Status = 'SKIPPED'; $e.Notes += 'Memory acquisition requires administrator.'; return (Complete-As4Entry $e @()) }

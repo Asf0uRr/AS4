@@ -1,6 +1,6 @@
 # Third-party components
 
-AS4 IR Tool starts these programs as separate processes and does not link them into its own code. Licence texts are in `docs\licenses\` and inside the tool folders. This is a summary, not legal advice.
+AS4 IR Tool starts these programs as separate processes and does not link them into its own code. Licence texts are in `licenses\` and inside the tool folders. This is a summary, not legal advice.
 
 | Component | Version | Licence | Source |
 |---|---|---|---|

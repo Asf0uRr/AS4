@@ -72,7 +72,7 @@ function Initialize-As4 {
     $global:SelfRx = $null
     $global:P = @{
         Root=$r; App="$r\app"; Tasks="$r\tasks"; Tools="$r\tools"; Config="$r\config"; Profiles="$r\config\profiles"; Rules="$r\config\rules"
-        Scripts="$r\scripts"; Docs="$r\docs"; Output="$r\output"
+        Scripts="$r\scripts"; Output="$r\output"
     }
     if (-not (Test-Path -LiteralPath $global:P.Output)) { New-Item -ItemType Directory -Path $global:P.Output -Force | Out-Null }
     $rtDir = Join-Path $r 'tools\_runtime\x64'; if ((Test-Path -LiteralPath $rtDir) -and ($env:PATH -notlike "*$rtDir*")) { $env:PATH = $env:PATH + ';' + $rtDir }   # last-resort DLL search for tools started from this process
