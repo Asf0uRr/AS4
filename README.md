@@ -1,95 +1,111 @@
-# AS4 IR Tool
+<pre align="center">
+          ▄▄▄▄▄
+        ▄████████▄
+       ▄██████████▀▀▀▀▀▀▶
+ ▄▄▄▄▄▄████████████▀
+▀████████████████▀
+   ▀██████████▀
+      ▀██▀ ▀██▀
+</pre>
 
-A portable incident-response and live-triage toolkit for Windows. Copy the folder to a USB drive, run it on the machine you need to look at, and get evidence plus a plain-language answer to *"is something wrong here, and what do I do next?"*
+<h1 align="center">AS4 IR Tool</h1>
+<p align="center"><i>flying without wings</i></p>
 
-- **Runs from its own folder.** Any drive, any path (spaces are fine). Nothing is installed on the endpoint.
-- **Read-only.** It does not delete, stop, quarantine, clear logs, extract credentials or change settings. It makes no network connections of its own.
-- **Local.** Detection rules and tools ship with it. Nothing is downloaded or uploaded.
-- **GUI and CLI.** Windows PowerShell 5.1 and WinForms only (both part of Windows).
-- **Evidence you can defend.** One folder per case, a SHA-256 ledger, sealed runs, a manifest of every command, and a chain-of-custody package.
+<p align="center">
+A Windows incident-response toolkit that lives in one folder.<br>
+Plug it in, run it, read the answer, take the evidence home.
+</p>
 
-## What it does
+---
+
+## Why this exists
+
+When a machine is acting strange you usually have about ten minutes before someone reboots it, and you do not get to install anything on it. So I wanted one folder I could carry on a USB stick that:
+
+- grabs the things that vanish first,
+- looks at the live machine and tells me in plain words if something smells wrong,
+- writes everything down so I can prove later what I did.
+
+No installer. No cloud. No "phone home". It only looks.
+
+## A minute with it
+
+Open `AS4_IR_Tool.exe`, type a case name, click **First Response**, pick what you're dealing with:
+
+> First 5 minutes · Suspected malware · Suspicious logons or RDP · Ransomware · Data theft · Persistence sweep · Everything
+
+AS4 collects in the order the data dies (connections and processes before files, files before logs), runs the **Live Hunt**, and hands you a report. The report starts with a verdict in normal language, then the leads, then *why each one matters* and *what to do next*, then the things it could not see.
+
+That last part matters. A tool that only says "clean" is lying to you.
+
+## What's in the box
+
+**Live Hunt** · thirty seconds, read-only. It checks things like a `svchost.exe` living in the wrong folder, Word starting PowerShell, encoded commands, an LSASS dump, unsigned programs running out of Temp, odd connections, about twenty places malware hides to survive a reboot, new admins, Defender switched off, and a few dozen more. Every rule is a line in `config/profiles/live_indicators.json`, so you can add your own.
+
+**Live Watch** · sits quietly and writes down what starts, connects and resolves. If something phones home on a steady rhythm, it says so.
+
+**Snapshots** · take one, do the thing, take another, compare. Or compare against a clean reference machine.
+
+**Evidence package** · a zip with a chain-of-custody sheet, a checksum for every file, and a verify button that notices if anyone touched it.
+
+**Plus the classics** · live-response commands, Prefetch / Amcache / Shimcache / jump lists / browser history / SRUM, event-log export, memory and disk imaging (WinPmem, FTK Imager), KAPE, Hayabusa with 21 ready-made questions, Chainsaw, YARA, IOC search, a UTC timeline, and Quick Scan: point it at any folder of logs and get a verdict.
+
+## Running it
 
 | | |
 |---|---|
-| **Collect evidence** | **First Response** picks the right collection for the situation (first 5 minutes, malware, suspicious logons/RDP, ransomware, data theft, persistence sweep, full triage) and runs it in order of volatility. Also: 38 live-response commands, 22 artifact groups (Prefetch, Amcache, Shimcache, jump lists, browser history, SRUM, WMI, registry hives...), event log export, memory and disk imaging workflows (FTK Imager, WinPmem), KAPE |
-| **Live analysis** | **Live Hunt** scores the running machine in about 30 seconds: process impersonation and wrong parents, Office or web servers spawning shells, encoded and download commands, LSASS dumping, unsigned programs in temp folders, odd connections, ~20 persistence places, accounts, Defender and firewall state, event logs, recently dropped files, attack-tool names, Cobalt Strike pipes. **Live Watch** records what starts, connects and resolves, and flags beacon-like reconnects. **Snapshots** show exactly what changed between two moments or against a clean reference machine |
-| **Analyze** | Quick Scan (point it at any folder of logs, get a verdict, attack chain and incident window), Hayabusa with 21 ready-made questions, Chainsaw (Sigma), YARA, IOC search, UTC timeline |
-| **Hand over** | Examiner notes, HTML/CSV/JSON reports, and an **evidence package**: one zip with a chain-of-custody record, a checksum list for every file and a verify function that detects tampering |
+| `AS4_IR_Tool.exe` | the window |
+| `AS4_IR_Tool_Admin.exe` | same, as administrator (sees much more) |
+| `AS4_IR_Tool_CLI.exe` | menus in a console; `-Check` tests the folder; `-Batch hunt -Case "Name"` runs unattended |
+| `scripts\Start-Without-Exe.cmd` | if your policy blocks unsigned exe files |
 
-Every finding says what was seen, why it matters and what to do next. Verdicts are leads for a person to confirm, never proof, and every report lists **what the check could not see**.
+The exe files are tiny launchers and are not code-signed. Sign them yourself with `scripts\Build-Exe.ps1 -SignThumbprint <cert>` if you need to.
 
-## Start
+## On a machine you don't trust
 
-1. Get the release package (or clone this repository and run `scripts\Get-Tools.ps1` on an analyst workstation to fetch the free tools). Copy the folder to your drive.
-2. On the endpoint, start one of:
+- Run it from a USB stick and keep `output\` there. AS4 writes only inside its own folder.
+- Everything it needs is in the folder, including the Visual C++ runtime DLLs. It downloads nothing and installs nothing. While I tested a full First Response and a package build I watched Temp, AppData, ProgramData and Windows\Temp: nothing was created or changed.
+- It runs at low priority. On a server, or when the CPU is busy, it switches to a gentler mode on its own (pauses, no file scan, fewer signature checks).
+- Windows will still log that programs ran (Prefetch, event logs). I can't stop that, and neither can you.
+- Only one optional thing writes to the registry: Autoruns, which wants to record that you accepted its licence. It's off by default and the console warns you first.
 
-| Action | How |
-|---|---|
-| GUI | `AS4_IR_Tool.exe` |
-| GUI as administrator | `AS4_IR_Tool_Admin.exe` (administrator shows more: Security log, Prefetch, all process paths, memory capture) |
-| Command line menus | `AS4_IR_Tool_CLI.exe` |
-| Environment and tool check | `AS4_IR_Tool_CLI.exe -Check` |
-| Unattended | `AS4_IR_Tool_CLI.exe -Batch hunt -Case "Name"` (also `quick`, `triage`, `evtx`, `first5`, `malware`, `logons`, `ransomware`, `insider`, `persistence`, `package`) |
-| No exe files | `scripts\Start-Without-Exe.cmd` takes the same arguments (use it if a policy blocks unsigned exe files) |
-
-3. Type a case name. A folder `output\<case name>\` is created (or reopened) and everything goes inside it. Nothing already there is overwritten.
-4. Open **First Response**, choose the situation, press *Run this*. Read the Live Hunt report. Build the **Evidence Package** when you are done.
-
-The exe files are small launchers for `app\Main.ps1`. They are **not code-signed** (see `docs\TROUBLESHOOTING.md`); you can sign them with your own certificate using `scripts\Build-Exe.ps1 -SignThumbprint`.
-
-## Layout
+## Where things go
 
 ```
 AS4\
-  AS4_IR_Tool.exe, AS4_IR_Tool_Admin.exe, AS4_IR_Tool_CLI.exe
-  app\       Main, Core (engine), Cli, Gui, GuiLive, CliLive
-  tasks\     one file per job: QuickResponse, Persistence, EventLogs, Artifacts, Hayabusa, Chainsaw, Kape,
-             Memory, Yara, IocSearch, Timeline, Integrity, Report,
-             LiveHunt, LiveReport, LiveWatch, Scenarios, Package
-  tools\     third-party programs (see tools\README.md); every one is optional
-  config\    tools.json, profiles\ (Hayabusa, Chainsaw, KAPE presets, live_indicators.json,
-             scenarios_collect.json, triage scoring), rules\
-  output\    one folder per case, plus _packages\
-  scripts\   Get-Tools, Prepare-Tools, Test-AS4, Build-Exe, New-Release
+  app\        the engine and the two interfaces
+  tasks\      one file per job (Live Hunt, Scenarios, Package, Hayabusa, ...)
+  config\     rules and presets, all plain JSON
+  tools\      third-party programs, every one optional (see tools\README.md)
+  output\     one folder per case, plus _packages\
+  scripts\    fetch tools, run the self-test, build the exes and the release
   docs\
 ```
 
-Case folder: `00_Metadata  01_System_Info  02_Network  03_Processes_Services  04_Users_Authentication  05_Event_Logs  06_KAPE  07_Memory  08_Disk  09_Persistence  10_Artifacts  11_Hayabusa_Analysis  11_Chainsaw_Analysis  12_Reports  13_Collection_Logs  14_Live_Analysis` (created only when used).
+Each case folder is numbered so you can find things half asleep: `01_System_Info`, `02_Network`, ... `12_Reports`, `13_Collection_Logs`, `14_Live_Analysis`.
 
-## Customise
+## Things I won't pretend
 
-- Detections are data: edit `config\profiles\live_indicators.json` (command-line patterns, attack-tool names, named pipes, expected system processes).
-- Situations are data: edit `config\profiles\scenarios_collect.json`.
-- Add a third-party tool: put it under `tools\`, add an entry to `config\tools.json`, register its hash with `scripts\Prepare-Tools.ps1 -Register`.
-
-## On infected or evidence machines
-
-- Run it **from a USB drive**, not from the machine's own disk, and keep `output\` on that drive. AS4 writes only inside its own folder (cases in `output\`, packages in `output\_packages\`); its temporary files stay in `output\_work`. A test that watched Temp, AppData, LocalAppData, ProgramData and Windows\Temp during a First Response run plus a package build found no file created or changed there.
-- Everything it needs is in the folder, including the Visual C++ runtime DLLs. It downloads and installs nothing.
-- Unavoidable traces: Windows itself records that programs ran (Prefetch, event logs, UserAssist) and PowerShell keeps its usual caches. The one optional item that writes to the registry is Autoruns (`-accepteula`); it is off by default and the CLI warns before running it.
-- Running as administrator (`AS4_IR_Tool_Admin.exe`) shows more; without it AS4 says what it could not see.
-
-## Honest limits
-
-Running any program changes a live system (new processes, Prefetch entries, event log records); memory capture is not zero-impact. Without administrator, the Security log, Prefetch, Defender exclusions and other users' process paths are invisible, and the report says so. A live view cannot see code that lives only in memory or hides from Windows: capture memory when in doubt. Tested on Windows 10 and 11 (64-bit); older Windows, 32-bit and ARM are untested. See `docs\EVIDENCE_HANDLING.md`, `docs\COMPATIBILITY.md` and `docs\TEST_RESULTS.md`.
-
-## Documentation
-
-`docs\QUICK_START.md` · `docs\LIVE_ANALYSIS.md` · `docs\EVIDENCE_HANDLING.md` · `docs\TOOLS_INVENTORY.md` · `docs\COMPATIBILITY.md` · `docs\TROUBLESHOOTING.md` · `docs\PORTABILITY.md` · `docs\LICENSES.md`
+- Running any program changes a live machine. Memory capture is never free.
+- A live view can't see code that exists only in memory or hides from Windows itself. If you suspect that, capture memory.
+- Without administrator it can't read the Security log, Prefetch, or other users' process paths. The report tells you when that happened.
+- Rule hits are leads, not verdicts. You decide.
+- Tested on Windows 10 and 11 (64-bit). Older Windows, 32-bit and ARM: untested.
 
 ## Build and test
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Test-AS4.ps1   # self-test on synthetic data
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Build-Exe.ps1  # launcher exes
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\New-Release.ps1 # dist\AS4_IR_Tool_<version>.zip + SHA256SUMS.txt
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Test-AS4.ps1    # self-test, synthetic data only
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Build-Exe.ps1   # the launcher exes
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\New-Release.ps1  # dist\AS4_IR_Tool_<version>.zip
 ```
 
-The release package contains only components whose licences allow redistribution (Hayabusa, Chainsaw, YARA, WinPmem, Microsoft Visual C++ runtime DLLs) and none of your cases.
+The release zip carries only what the licences allow (Hayabusa, Chainsaw, YARA, WinPmem, the Microsoft runtime DLLs). KAPE, FTK Imager and the Sysinternals tools are yours to add: `tools\README.md` says how.
+
+More in `docs\`: [Quick start](docs/QUICK_START.md) · [Live analysis](docs/LIVE_ANALYSIS.md) · [Evidence handling](docs/EVIDENCE_HANDLING.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) · [Licences](docs/LICENSES.md)
 
 ## Licence
 
-AS4 IR Tool code: MIT (`LICENSE`). Bundled third-party programs keep their own licences: `docs\LICENSES.md`, `docs\THIRD_PARTY_NOTICES.md`.
+MIT for the AS4 code (`LICENSE`). Bundled programs keep their own licences.
 
-Use it only on systems you are authorised to examine.
+Only use it on systems you're allowed to examine.
