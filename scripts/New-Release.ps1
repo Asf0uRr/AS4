@@ -43,7 +43,8 @@ Set-Content (Join-Path $pkg 'tools\README.md') "# tools`r`n`r`nIncluded in this 
 $forbidden = 'kape.exe', 'gkape.exe', 'FTK Imager.exe', 'autorunsc64.exe', 'vol.exe', 'RamCapture64.exe', 'NetworkMiner.exe', 'ArsenalImageMounter.exe', 'LastActivityView.exe', 'PECmd.exe', 'MFTECmd.exe', 'AmcacheParser.exe', 'ftkimager.exe', 'MRCv120.exe', 'rip.exe', 'fls.exe', 'FullEventLogView.exe', 'WinPrefetchView.exe', 'USBLogView.exe', '*.pdf'
 foreach ($f in $forbidden) { $hit = Get-ChildItem $pkg -Recurse -File -Filter $f -ErrorAction SilentlyContinue | Select-Object -First 1; if ($hit) { throw "Release contains a file that must not be published: $($hit.FullName)" } }
 $caseData = Get-ChildItem (Join-Path $pkg 'output') -Recurse -File | Where-Object Name -ne 'README.txt'; if ($caseData) { throw 'Release contains case data.' }
-$pers = Get-ChildItem $pkg -Recurse -File -Include *.md, *.ps1, *.json, *.cs, *.cmd, *.txt -ErrorAction SilentlyContinue | Where-Object { $_.FullName -notmatch '\\(tools|licenses)\\' -and $_.Name -ne 'New-Release.ps1' -and $_.Name -ne 'README.md' }   # the README links to the public repository | Select-String -Pattern 'Asf0uRr|NCSC|baraa|@gmail' -ErrorAction SilentlyContinue
+# README.md is skipped here because it links to the public repository
+$pers = Get-ChildItem $pkg -Recurse -File -Include *.md, *.ps1, *.json, *.cs, *.cmd, *.txt -ErrorAction SilentlyContinue | Where-Object { $_.FullName -notmatch '\\(tools|licenses)\\' -and $_.Name -ne 'New-Release.ps1' -and $_.Name -ne 'README.md' } | Select-String -Pattern 'Asf0uRr|NCSC|baraa|@gmail' -ErrorAction SilentlyContinue
 if ($pers) { throw "Personal data found: $($pers[0].Path):$($pers[0].LineNumber)" }
 
 $zip = Join-Path $dist "$name.zip"; if (Test-Path $zip) { Remove-Item $zip -Force }
