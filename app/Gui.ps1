@@ -608,7 +608,7 @@ function Start-As4Gui {
         'Live Hunt' = { Build-LiveHunt }
         'Quick Scan' = { Build-QuickScanPage }; 'Hayabusa' = { Build-HayabusaPage }; 'Hayabusa Advanced' = { Build-HayabusaAdvancedPage }; 'Chainsaw' = { Build-ChainsawPage }; 'KAPE' = { Build-KapePage }; 'IOC, YARA, Timeline' = { Build-AnalysisPage }
         '@Case' = $null
-        'Report and Integrity' = { Build-ReportPage }; 'Evidence Package' = { Build-PackagePage }; 'Tools' = { Build-ToolsPage }
+        'Report and Integrity' = { Build-ReportPage }; 'Tools' = { Build-ToolsPage }
     }
     $y = 10
     foreach ($name in $pages.Keys) {

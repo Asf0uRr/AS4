@@ -8,10 +8,9 @@ New: live analysis and faster collection.
 - **Live Watch**: records what starts, connects and resolves for a chosen time; flags steady reconnects that look like beacons.
 - **Snapshots**: save the machine state and compare two snapshots (or one from a clean reference machine) to see what was added, removed or changed.
 - **First Response**: seven situations (first 5 minutes, malware, suspicious logons/RDP, ransomware, data theft, persistence sweep, full triage) that pick the right collection, in order of volatility, and finish with a report.
-- **Evidence package**: examiner notes, a chain-of-custody record, one zip with a checksum list and a verify function that detects tampering.
 - **Self-exclusion**: scans describe the machine, not AS4. Detections caused by AS4 itself (its own commands, scripts, exports, rule files, bundled tools in Prefetch, Defender hits inside its folder) are left out of Quick Scan, Hayabusa findings, Live Hunt and Live Watch, and each report says how many were left out. Raw timelines are untouched. Rules: `config/profiles/self_exclusions.json`.
 - Editable rule file: `config/profiles/live_indicators.json`.
-- GUI pages: First Response, Live Hunt, Evidence Package. CLI menus 14-16. Batch modes `hunt`, `package`, and one per scenario.
+- GUI pages: First Response, Live Hunt. CLI menus 14-15. Batch modes `hunt` and one per scenario.
 
 ## 1.0.0
 

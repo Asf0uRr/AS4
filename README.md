@@ -1,96 +1,99 @@
-<p align="center"><img src="docs/images/logo.png" alt="AS4 IR Tool" width="160"></p>
+<p align="center"><img src="docs/images/hero.png" alt="AS4 IR Tool" width="100%"></p>
 
-<h1 align="center">AS4 IR Tool</h1>
-<p align="center"><i>flying without wings</i></p>
+You get called because a machine is "acting weird". Maybe it's a finance laptop, maybe a server nobody wants to restart. You have a few minutes before somebody pulls the plug, and you are not allowed to install anything on it.
 
-<p align="center">
-A Windows incident-response toolkit that lives in one folder.<br>
-Plug it in, run it, read the answer, take the evidence home.
-</p>
+That's the situation this was built for. AS4 is one folder. Put it on a USB stick, walk up to the machine, double-click, and it does what you'd otherwise do by hand in a very stressed hour: grabs the things that disappear first, looks around, and tells you in plain words whether something smells wrong.
 
----
+It only looks. It never kills a process, deletes a file, clears a log, changes a setting or touches the network.
 
-## Why this exists
+## What it feels like
 
-When a machine is acting strange you usually have about ten minutes before someone reboots it, and you do not get to install anything on it. So I wanted one folder I could carry on a USB stick that:
+You open it, type a case name, and click **First Response**. Then pick what you think you're dealing with:
 
-- grabs the things that vanish first,
-- looks at the live machine and tells me in plain words if something smells wrong,
-- writes everything down so I can prove later what I did.
+<p align="center"><img src="docs/images/first-response.png" alt="First Response" width="88%"></p>
 
-No installer. No cloud. No "phone home". It only looks.
+AS4 collects in the order the evidence dies: connections and processes first, then files, then logs. Then it runs the **Live Hunt** and shows you this:
 
-## See it
+<p align="center"><img src="docs/images/live-hunt.png" alt="Live Hunt" width="88%"></p>
 
-<p align="center"><img src="docs/images/live-hunt.png" alt="Live Hunt: a verdict, the reasons, and every lead with why it matters" width="900"></p>
-<p align="center"><sub>Live Hunt on sample data: a verdict in plain words, why, and every lead with what to do next.</sub></p>
+A verdict you can read at 3 a.m., the reasons behind it, and a list of leads. Click one:
 
-<p align="center"><img src="docs/images/first-response.png" alt="First Response: pick the situation" width="440"> <img src="docs/images/evidence-package.png" alt="Evidence package" width="440"></p>
-<p align="center"><sub>First Response (pick the situation) and the evidence package. Screenshots use made-up names and sample findings.</sub></p>
+<p align="center"><img src="docs/images/live-hunt-detail.png" alt="A lead explained" width="88%"></p>
 
-## A minute with it
+Each lead says what was seen, why it matters, what to do next, and which MITRE technique it maps to. At the bottom there's a list of what the check could *not* see (no admin, a log that's off, anything that lives only in memory). A tool that only ever says "all clear" is lying to you, so this one tells you where it's blind.
 
-Open `AS4_IR_Tool.exe`, type a case name, click **First Response**, pick what you're dealing with:
+*(The screenshots use made-up names and sample findings.)*
 
-> First 5 minutes · Suspected malware · Suspicious logons or RDP · Ransomware · Data theft · Persistence sweep · Everything
+## What the Live Hunt actually looks at
 
-AS4 collects in the order the data dies (connections and processes before files, files before logs), runs the **Live Hunt**, and hands you a report. The report starts with a verdict in normal language, then the leads, then *why each one matters* and *what to do next*, then the things it could not see.
+About thirty seconds, low priority, read-only.
 
-That last part matters. A tool that only says "clean" is lying to you.
+- A `svchost.exe` living in the wrong folder, or a `lsass.exe` with the wrong parent. A name that's one letter off a Windows process.
+- Word, Excel or a web server starting PowerShell. Encoded and download commands. An LSASS dump. Backups being deleted, logs being cleared.
+- Unsigned programs running out of Temp, Downloads or Public. A program whose file has already been deleted.
+- Programs that never use the network, talking to the internet.
+- Around twenty places malware hides to survive a reboot: Run keys, tasks, services, WMI, IFEO, Winlogon, AppInit, COM hijacks, a swapped `sethc.exe`.
+- New local admins, a disabled Defender, exclusions, firewall off, RDP wide open, a port forward you didn't make.
+- Event logs: services installed, logs cleared, Defender detections, RDP logins from the internet, password guessing that ended in a success.
+- Names of attack tools in Prefetch, services and installed software, and the pipe names Cobalt Strike likes.
 
-## What's in the box
+The rules aren't buried in code. They're lines in `config/profiles/live_indicators.json`. If your network has something that looks suspicious but isn't, delete the line. If you know a new trick, add one.
 
-**Live Hunt** · thirty seconds, read-only. It checks things like a `svchost.exe` living in the wrong folder, Word starting PowerShell, encoded commands, an LSASS dump, unsigned programs running out of Temp, odd connections, about twenty places malware hides to survive a reboot, new admins, Defender switched off, and a few dozen more. Every rule is a line in `config/profiles/live_indicators.json`, so you can add your own.
+## Three more tricks
 
-**Live Watch** · sits quietly and writes down what starts, connects and resolves. If something phones home on a steady rhythm, it says so.
+**Live Watch** sits quietly for as long as you tell it and writes down what starts, connects and resolves. If something phones home on a steady rhythm, it points at it.
 
-**Snapshots** · take one, do the thing, take another, compare. Or compare against a clean reference machine.
+**Snapshots**: take one, do the thing, take another, compare. You see exactly what was added, removed or changed. You can also compare against a snapshot from a clean machine of the same build.
 
-**Evidence package** · a zip with a chain-of-custody sheet, a checksum for every file, and a verify button that notices if anyone touched it.
+**Quick Scan**: have a folder of `.evtx` logs from somewhere else? Point AS4 at it and it runs the Hayabusa rules and gives you the same kind of verdict, with an attack chain and an incident window.
 
-**Plus the classics** · live-response commands, Prefetch / Amcache / Shimcache / jump lists / browser history / SRUM, event-log export, memory and disk imaging (WinPmem, FTK Imager), KAPE, Hayabusa with 21 ready-made questions, Chainsaw, YARA, IOC search, a UTC timeline, and Quick Scan: point it at any folder of logs and get a verdict.
+And the usual toolbox is in there too: live-response commands, Prefetch, Amcache, Shimcache, jump lists, browser history, SRUM, event-log export, memory and disk imaging (WinPmem, FTK Imager), KAPE, Hayabusa with 21 ready-made questions, Chainsaw, YARA, IOC search, a UTC timeline. Everything it saves goes in a numbered case folder with a SHA-256 ledger and a manifest of every command, so you can show later exactly what you did.
 
-## Running it
+## It ignores itself
+
+Running a scanner on a machine creates a lot of events that look exactly like what it's hunting: PowerShell scripts, process starts, files in Temp. AS4 filters its own footprint out of every verdict and tells you how many items it dropped. The raw logs are never touched.
+
+## Using it
 
 | | |
 |---|---|
 | `AS4_IR_Tool.exe` | the window |
-| `AS4_IR_Tool_Admin.exe` | same, as administrator (sees much more) |
-| `AS4_IR_Tool_CLI.exe` | menus in a console; `-Check` tests the folder; `-Batch hunt -Case "Name"` runs unattended |
-| `scripts\Start-Without-Exe.cmd` | if your policy blocks unsigned exe files |
+| `AS4_IR_Tool_Admin.exe` | the same, as administrator. It sees a lot more: Security log, Prefetch, every process path. |
+| `AS4_IR_Tool_CLI.exe` | console menus. `-Check` tests the folder, `-Batch hunt -Case "Name"` runs unattended. |
+| `scripts\Start-Without-Exe.cmd` | for machines whose policy blocks unsigned exe files |
 
-The exe files are tiny launchers and are not code-signed. Sign them yourself with `scripts\Build-Exe.ps1 -SignThumbprint <cert>` if you need to.
+The exes are small launchers around `app\Main.ps1` and are not code-signed. Sign them with your own certificate using `scripts\Build-Exe.ps1 -SignThumbprint <cert>` if you need that.
 
 ## On a machine you don't trust
 
-- Run it from a USB stick and keep `output\` there. AS4 writes only inside its own folder.
-- Everything it needs is in the folder, including the Visual C++ runtime DLLs. It downloads nothing and installs nothing. While I tested a full First Response and a package build I watched Temp, AppData, ProgramData and Windows\Temp: nothing was created or changed.
-- It runs at low priority. On a server, or when the CPU is busy, it switches to a gentler mode on its own (pauses, no file scan, fewer signature checks).
-- Windows will still log that programs ran (Prefetch, event logs). I can't stop that, and neither can you.
-- Only one optional thing writes to the registry: Autoruns, which wants to record that you accepted its licence. It's off by default and the console warns you first.
+Run it from a USB stick and keep `output\` there. AS4 writes only inside its own folder. I watched Temp, AppData, ProgramData and Windows\Temp during a full First Response run: nothing was created or changed.
 
-## Where things go
+Everything it needs is in the folder, down to the Visual C++ runtime DLLs. It downloads nothing and installs nothing. It runs at low priority, and on a server or a busy CPU it drops into a gentler mode on its own (pauses, no file scan, fewer signature checks). A full Live Hunt on my workstation takes about half a minute and half of one core at low priority.
+
+Windows will still record that programs ran (Prefetch, event logs). That's unavoidable. The only optional item that writes to the registry is Autoruns, which wants to remember that you accepted its licence. It's off by default and the console warns you first.
+
+## What I won't pretend
+
+- Running anything changes a live machine. Memory capture is never free.
+- A live view can't see code that exists only in memory, or code that hides from Windows itself. If you suspect that, capture memory.
+- Without administrator it can't read the Security log, Prefetch or other users' process paths. The report says so.
+- A hit is a lead, not a verdict. You decide.
+- Tested on Windows 10 and 11, 64-bit. Older Windows, 32-bit and ARM are untested.
+
+## What's in the folder
 
 ```
 AS4\
   app\        the engine and the two interfaces
-  tasks\      one file per job (Live Hunt, Scenarios, Package, Hayabusa, ...)
-  config\     rules and presets, all plain JSON
-  tools\      third-party programs, every one optional (see tools\README.md)
-  output\     one folder per case, plus _packages\
-  scripts\    fetch tools, run the self-test, build the exes and the release
+  tasks\      one file per job: Live Hunt, Live Watch, Scenarios, Hayabusa, Artifacts, ...
+  config\     rules and presets, plain JSON
+  tools\      third-party programs, each one optional (tools\README.md)
+  output\     one folder per case
+  scripts\    fetch tools, self-test, build the exes and the release
   docs\
 ```
 
-Each case folder is numbered so you can find things half asleep: `01_System_Info`, `02_Network`, ... `12_Reports`, `13_Collection_Logs`, `14_Live_Analysis`.
-
-## Things I won't pretend
-
-- Running any program changes a live machine. Memory capture is never free.
-- A live view can't see code that exists only in memory or hides from Windows itself. If you suspect that, capture memory.
-- Without administrator it can't read the Security log, Prefetch, or other users' process paths. The report tells you when that happened.
-- Rule hits are leads, not verdicts. You decide.
-- Tested on Windows 10 and 11 (64-bit). Older Windows, 32-bit and ARM: untested.
+Case folders are numbered so you can find things half asleep: `01_System_Info`, `02_Network`, ... `12_Reports`, `13_Collection_Logs`, `14_Live_Analysis`.
 
 ## Build and test
 
@@ -100,12 +103,10 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Build-Exe.ps1   # th
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\New-Release.ps1  # dist\AS4_IR_Tool_<version>.zip
 ```
 
-The release zip carries only what the licences allow (Hayabusa, Chainsaw, YARA, WinPmem, the Microsoft runtime DLLs). KAPE, FTK Imager and the Sysinternals tools are yours to add: `tools\README.md` says how.
+The release zip carries only what the licences allow: Hayabusa, Chainsaw, YARA, WinPmem and the Microsoft runtime DLLs. KAPE, FTK Imager and the Sysinternals tools are yours to add (`tools\README.md` says how). Every tool is optional; Live Hunt, Live Watch, Snapshots and First Response need none of them.
 
-More in `docs\`: [Quick start](docs/QUICK_START.md) · [Live analysis](docs/LIVE_ANALYSIS.md) · [Evidence handling](docs/EVIDENCE_HANDLING.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) · [Licences](docs/LICENSES.md)
+More: [Quick start](docs/QUICK_START.md) · [Live analysis](docs/LIVE_ANALYSIS.md) · [Evidence handling](docs/EVIDENCE_HANDLING.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) · [Licences](docs/LICENSES.md)
 
 ## Licence
 
-MIT for the AS4 code (`LICENSE`). Bundled programs keep their own licences.
-
-Only use it on systems you're allowed to examine.
+MIT for the AS4 code (`LICENSE`). Bundled programs keep their own licences. Only use it on systems you're allowed to examine.

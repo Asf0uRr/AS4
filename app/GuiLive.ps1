@@ -1,4 +1,4 @@
-# AS4 IR Tool - pages for First Response, Live Hunt and the Evidence Package. ASCII only.
+# AS4 IR Tool - pages for First Response and Live Hunt. ASCII only.
 
 function Get-LhBannerColor { param($c) switch ($c) { 'green' { [Drawing.Color]::FromArgb(46, 125, 79) } 'yellow' { [Drawing.Color]::FromArgb(154, 123, 23) } 'orange' { [Drawing.Color]::FromArgb(180, 96, 26) } 'red' { [Drawing.Color]::FromArgb(169, 50, 50) } default { [Drawing.Color]::FromArgb(122, 31, 31) } } }
 
@@ -118,35 +118,5 @@ function Build-FirstResponsePage {
                 else { Gui-Msg "Finished: $scTitle`r`n`r`nThe case report is in 12_Reports." 'First Response' } } $scTitle }.GetNewClosure())
         $y += 126
     }
-    $p
-}
-
-function Build-PackagePage {
-    $p = NPanel; foreach ($c in (NHeading 'Evidence Package' 'Write down what you did, then wrap the case in one zip with a chain-of-custody record and a checksum list. The zip is written next to the cases in output\_packages and never changes the case.')) { $p.Controls.Add($c) }
-    $p.Controls.Add((NSection 'EXAMINER NOTES  (saved in the case, hashed, included in the package)' 20 86 700))
-    $nt = NText 20 110 700 '' $true 70; $p.Controls.Add($nt)
-    $bn = NButton 'Save note' 730 110 140 32 $true 'Adds a time-stamped note file to the case.'; $p.Controls.Add($bn)
-    $nl = New-Object Windows.Forms.ListBox; $nl.Location = New-Object Drawing.Point(20, 190); $nl.Size = New-Object Drawing.Size(980, 110); $nl.BackColor = $global:C.Input; $nl.ForeColor = $global:C.Text; $nl.BorderStyle = 'FixedSingle'; $nl.Anchor = 'Top,Left,Right'; $p.Controls.Add($nl)
-    $refresh = { $nl.Items.Clear(); if ($global:Case) { foreach ($n in (Get-As4Notes)) { [void]$nl.Items.Add(("{0}   {1}" -f $n.Time, ($n.Text -replace '\s+', ' '))) } } }.GetNewClosure()
-    $p.Add_VisibleChanged({ if ($p.Visible) { & $refresh } }.GetNewClosure())
-    $bn.Add_Click({ if (-not $global:Case) { Gui-Msg 'No case is open.'; return }; try { [void](Add-As4Note $nt.Text); $nt.Text = ''; & $refresh; Gui-Log OK 'Note saved' } catch { Gui-Msg $_.Exception.Message 'Note' 'Warning' } }.GetNewClosure())
-    $p.Controls.Add((NSection 'BUILD THE PACKAGE' 20 316 600))
-    $p.Controls.Add((NLabel 'Examiner name (printed on the record)' 20 342 300 20 $global:C.Dim)); $ex = NText 20 364 360 "$env:USERDOMAIN\$env:USERNAME"; $p.Controls.Add($ex)
-    $fast = NCheck 'No compression (fastest; use for big memory images)' 400 366 380; $p.Controls.Add($fast)
-    $bb = NButton 'Build evidence package' 20 402 220 36 $true 'Verifies every hash first, then writes the zip, PACKAGE_SHA256SUMS.txt, CHAIN_OF_CUSTODY.txt and a .sha256 file for the zip.'; $p.Controls.Add($bb)
-    $bf = NButton 'Open packages folder' 250 402 180 36; $p.Controls.Add($bf)
-    $res = NLabel '' 20 446 980 40 $global:C.Dim; $p.Controls.Add($res)
-    $p.Controls.Add((NSection 'CHECK A PACKAGE  (do this after copying it to another disk or computer)' 20 496 700))
-    $bv = NButton 'Verify a package...' 20 522 190 34 $false 'Recomputes the checksum of the zip and of every file inside and compares with the lists in the package.'; $p.Controls.Add($bv)
-    $vr = NLabel '' 220 528 780 40 $global:C.Dim; $p.Controls.Add($vr)
-    $bb.Add_Click({ if (-not $global:Case) { Gui-Msg 'No case is open.'; return }
-        if (-not (Gui-Confirm "Build the evidence package for case '$($global:Case.Id)'?`r`nIt checks every hash first, then zips the case.")) { return }
-        Gui-Run { $r = New-As4EvidencePackage -Examiner $ex.Text -Fast:$fast.Checked -OnProgress { param($i, $n, $m) Gui-Progress $i $n "packaging: $m" }
-            if ($r.Status -eq 'OK') { $res.ForeColor = $global:C.Ok; $res.Text = "Done: $($r.Path)`r`n$($r.Notes -join ' ')"; Gui-Log OK "Package: $($r.Path)" } else { $res.ForeColor = $global:C.Bad; $res.Text = "Not built: $($r.Status). $($r.Notes -join ' ')" } } 'Building the package' }.GetNewClosure())
-    $bf.Add_Click({ $d = Join-Path $global:P.Output '_packages'; if (-not (Test-Path -LiteralPath $d)) { New-Item -ItemType Directory $d -Force | Out-Null }; Start-Process explorer.exe -ArgumentList (ConvertTo-ArgString @($d)) })
-    $bv.Add_Click({ $d = New-Object Windows.Forms.OpenFileDialog; $d.Filter = 'Evidence package|*.zip'; $d.InitialDirectory = (Join-Path $global:P.Output '_packages'); if ($d.ShowDialog() -ne 'OK') { return }
-        $file = $d.FileName
-        Gui-Run { $rows = @(Test-As4EvidencePackage $file); $bad = @($rows | Where-Object { $_.Status -notin 'OK' }); $ok = @($rows | Where-Object Status -eq 'OK').Count
-            if ($bad.Count) { $vr.ForeColor = $global:C.Bad; $vr.Text = "PROBLEM: $ok OK, $($bad.Count) not OK. First: $($bad[0].Status) $($bad[0].Item)"; Gui-Log ERROR $vr.Text } else { $vr.ForeColor = $global:C.Ok; $vr.Text = "All $ok checks passed. The package is intact."; Gui-Log OK $vr.Text } } 'Verifying the package' }.GetNewClosure())
     $p
 }

@@ -1,7 +1,7 @@
 # Evidence Handling
 
 ## Output structure
-`output\<case name>\` contains `00_Metadata` (case.json, `hashes.csv` ledger, `seal_<run>.sha256`), `01_System_Info`, `02_Network`, `03_Processes_Services`, `04_Users_Authentication`, `05_Event_Logs` (`raw_evtx\` originals, `filtered_evtx\` derived), `06_KAPE`, `07_Memory`, `08_Disk`, `09_Persistence`, `10_Artifacts`, `11_Hayabusa_Analysis`, `11_Chainsaw_Analysis`, `12_Reports`, `13_Collection_Logs` (`manifest.jsonl`, `session.log`), `14_Live_Analysis` (Live Hunt, Live Watch and snapshot files). Folders are created only when used. Evidence packages are written next to the cases, in `output\_packages\`, never inside a case.
+`output\<case name>\` contains `00_Metadata` (case.json, `hashes.csv` ledger, `seal_<run>.sha256`), `01_System_Info`, `02_Network`, `03_Processes_Services`, `04_Users_Authentication`, `05_Event_Logs` (`raw_evtx\` originals, `filtered_evtx\` derived), `06_KAPE`, `07_Memory`, `08_Disk`, `09_Persistence`, `10_Artifacts`, `11_Hayabusa_Analysis`, `11_Chainsaw_Analysis`, `12_Reports`, `13_Collection_Logs` (`manifest.jsonl`, `session.log`), `14_Live_Analysis` (Live Hunt, Live Watch and snapshot files). Folders are created only when used.
 
 ## Recorded for every operation (`manifest.jsonl`, one JSON per line)
 Run ID, task ID/name, status (`OK`, `FAILED`, `SKIPPED`, `TIMEOUT`, `CANCELLED`), start/end UTC, exit code, command and exact arguments, tool version, source, destination files, SHA-256 of each file, notes and warnings. Status is derived from exit code and output, never from "a file exists".
@@ -29,10 +29,6 @@ Copied files get the source Created/Modified/Accessed times applied; originals a
 
 ## Live analysis files
 `hunt_inventory_*.json` and `snapshot_*.json` are raw (what the machine looked like); `hunt_findings_*`, `LiveHunt_*`, `LiveWatch_*` and `snapshot_changes_*` are derived (what AS4 concluded). `watch_events_*` is raw observation. All are in the hash ledger.
-
-## Chain of custody
-`Evidence Package` verifies every hash in the case, then writes `output\_packages\<case>_evidence_<time>.zip` with `CHAIN_OF_CUSTODY.txt`, `PACKAGE_SHA256SUMS.txt` and a `.sha256` for the zip. `Verify a package` recomputes all of them and reports `OK`, `MISMATCH`, `MISSING` or `NOT_LISTED`. Examiner notes (`00_Metadata
-otes\`) are hashed as kind `note` and included.
 
 ## Findings language
 Heuristic `TriageLeads`, Chainsaw/Sigma matches, YARA and IOC hits are leads for analyst review - not confirmed compromise.

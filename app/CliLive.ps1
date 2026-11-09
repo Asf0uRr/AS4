@@ -1,4 +1,4 @@
-# AS4 IR Tool - CLI menus for First Response, Live Hunt and the Evidence Package. ASCII only.
+# AS4 IR Tool - CLI menus for First Response and Live Hunt. ASCII only.
 
 function Write-CliVerdict {
     param($V, $Findings, $Next)
@@ -49,18 +49,6 @@ function Menu-LiveHunt {
                 $a = [int](Read-Line 'Before (number)' ([Math]::Max(1, $sn.Count - 1))); $b = [int](Read-Line 'After (number)' $sn.Count)
                 $c = Invoke-As4SnapshotCompare -Before $sn[$a - 1].Path -After $sn[$b - 1].Path; Write-Host "  $($c.Notes -join ' ')" -ForegroundColor Green
                 $c.Rows | Where-Object { $_.Lead } | Select-Object -First 15 | ForEach-Object { Write-Host ("   [{0}] {1}: {2}  <= {3}" -f $_.Change, $_.Category, $_.Item, $_.Lead) -ForegroundColor Yellow }; Write-Host "  Report: $($c.Html)" -ForegroundColor Green } } } }
-    catch { Write-Host $_.Exception.Message -ForegroundColor Red }
-    Read-Host 'Enter' | Out-Null
-}
-
-function Menu-Package {
-    if (-not (Require-Case)) { return }
-    Show-Banner; Write-Host '== Notes and Evidence Package ==' -ForegroundColor Cyan
-    Write-Host '  1. Add an examiner note   2. Build the evidence package (zip + chain of custody)   3. Verify a package   B. Back'
-    try { switch (Read-Host 'Select') {
-        '1' { $t = Read-Host '  Note'; [void](Add-As4Note $t); Write-Host '  Saved.' -ForegroundColor Green }
-        '2' { if (Confirm-Action 'Verify every hash and zip the whole case into output\_packages?') { $r = New-As4EvidencePackage -Examiner (Read-Line 'Examiner name' "$env:USERDOMAIN\$env:USERNAME") -OnProgress { param($i, $n, $m) Write-Host "  [$i/$n] $m" -ForegroundColor Cyan }; $col = 'Red'; if ($r.Status -eq 'OK') { $col = 'Green' }; Write-Host "  $($r.Status): $($r.Notes -join ' ')" -ForegroundColor $col } }
-        '3' { $p = Read-Line 'Package zip'; $rows = @(Test-As4EvidencePackage $p); $bad = @($rows | Where-Object Status -ne 'OK'); $col = 'Green'; if ($bad.Count) { $col = 'Red' }; Write-Host "  $(@($rows | Where-Object Status -eq 'OK').Count) OK, $($bad.Count) problem(s)" -ForegroundColor $col; $bad | Select-Object -First 10 | Format-Table Status, Item | Out-Host } } }
     catch { Write-Host $_.Exception.Message -ForegroundColor Red }
     Read-Host 'Enter' | Out-Null
 }

@@ -1,6 +1,6 @@
-# Live analysis, First Response and evidence packages
+# Live analysis and First Response
 
-Everything on this page runs from the AS4 folder, needs no installation on the machine you examine, makes no network connection of its own and only reads. Output goes to `output\<case>\14_Live_Analysis\` (and `output\_packages\` for packages).
+Everything on this page runs from the AS4 folder, needs no installation on the machine you examine, makes no network connection of its own and only reads. Output goes to `output\<case>\14_Live_Analysis\`.
 
 ## Live Hunt
 
@@ -57,12 +57,6 @@ Pick the situation; AS4 picks the collection and runs it in order of volatility:
 Items that need administrator are skipped and reported as `SKIPPED` when AS4 is not elevated. Private-data items can be switched off with one tick.
 
 CLI: `AS4_IR_Tool_CLI.exe -Batch malware -Case "Name"` (also `first5`, `logons`, `ransomware`, `insider`, `persistence`) or `-Batch hunt`.
-
-## Notes and evidence package
-
-- **Notes**: time-stamped examiner notes saved in `00_Metadata\notes\`, hashed and included in the package.
-- **Package**: verifies every hash in the case first, then writes one zip to `output\_packages\` containing the case, `CHAIN_OF_CUSTODY.txt` (source machine, time zone, account, first and last action, operation counts, integrity result, limits of live collection, notes, signature lines), `PACKAGE_SHA256SUMS.txt` (SHA-256 of every file in the zip) and `README.txt`, plus a `.sha256` file for the zip. The case itself is not changed.
-- **Verify**: recomputes the zip hash and every file hash and reports `OK`, `MISMATCH`, `MISSING` or `NOT_LISTED`. Run it after copying the package to another disk.
 
 ## Limits
 

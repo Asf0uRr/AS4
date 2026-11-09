@@ -4,7 +4,7 @@ param([string]$Root, [string]$ResultFile)
 $ErrorActionPreference = 'Continue'
 $root0 = Split-Path -Parent $PSScriptRoot; $app = Join-Path $root0 'app'; $tasksDir = Join-Path $root0 'tasks'
 if (-not $Root) { $Root = $root0 }
-. (Join-Path $app 'Core.ps1'); foreach ($f in 'QuickResponse', 'Persistence', 'EventLogs', 'Artifacts', 'Hayabusa', 'QuickScan', 'Chainsaw', 'Kape', 'Memory', 'Yara', 'IocSearch', 'Timeline', 'Integrity', 'Report', 'LiveHunt', 'LiveReport', 'LiveWatch', 'Scenarios', 'Package') { . (Join-Path $tasksDir "$f.ps1") }
+. (Join-Path $app 'Core.ps1'); foreach ($f in 'QuickResponse', 'Persistence', 'EventLogs', 'Artifacts', 'Hayabusa', 'QuickScan', 'Chainsaw', 'Kape', 'Memory', 'Yara', 'IocSearch', 'Timeline', 'Integrity', 'Report', 'LiveHunt', 'LiveReport', 'LiveWatch', 'Scenarios') { . (Join-Path $tasksDir "$f.ps1") }
 Initialize-As4 -Root $Root
 $global:R = New-Object Collections.ArrayList
 function T { param($id, $name, [scriptblock]$body)
@@ -329,20 +329,6 @@ T 'SC02' 'First Response runs a scenario in order and ends with the Live Hunt an
     Assert ($r.Hunt -and $r.Hunt.Verdict) 'hunt'; Assert ($r.Report -and (Test-Path -LiteralPath $r.Report.Html)) 'report'; Assert (@($r.Results | Where-Object Name -eq 'Snapshot').Count -eq 1) 'snapshot'
     $bad = @($r.Results | Where-Object { $_.Status -in 'FAILED', 'TIMEOUT' -and $_.TaskId -notin 'query_user' }); Assert ($bad.Count -eq 0) (($bad | ForEach-Object { "$($_.Name)=$($_.Status)" }) -join ', ')
     "$(@($r.Results).Count) steps"
-}
-T 'PK01' 'Notes and evidence package: custody record, checksum list, zip hash, verify passes and detects tampering' {
-    Add-Type -AssemblyName System.IO.Compression.FileSystem
-    $nf = Add-As4Note 'Self-test note: machine seen powered on at 10:00.'; Assert (Test-Path -LiteralPath $nf) 'note file'; Assert (@(Get-As4Notes).Count -ge 1) 'notes list'
-    $k = New-As4EvidencePackage -Examiner 'Self Test' -Fast; Assert ($k.Status -eq 'OK' -and (Test-Path -LiteralPath $k.Path)) "package: $($k.Notes -join ' ')"; Assert (Test-Path -LiteralPath "$($k.Path).sha256") 'sidecar'
-    $z = [IO.Compression.ZipFile]::OpenRead($k.Path); $names = @($z.Entries | ForEach-Object { $_.FullName }); $z.Dispose()
-    foreach ($want in 'CHAIN_OF_CUSTODY.txt', 'PACKAGE_SHA256SUMS.txt', 'README.txt') { Assert ($names -contains $want) "zip lacks $want" }
-    Assert (@($names | Where-Object { $_ -match '\\' }).Count -eq 0) 'backslash in zip entry names'
-    $v = @(Test-As4EvidencePackage $k.Path); Assert (@($v | Where-Object Status -ne 'OK').Count -eq 0) (($v | Where-Object Status -ne 'OK' | Select-Object -First 3 | ForEach-Object { "$($_.Status) $($_.Item)" }) -join ', ')
-    $bad = Join-Path (Split-Path $k.Path) 'tampered.zip'; Copy-Item -LiteralPath $k.Path $bad; Copy-Item -LiteralPath "$($k.Path).sha256" "$bad.sha256"
-    $zu = [IO.Compression.ZipFile]::Open($bad, 'Update'); $en = $zu.Entries | Where-Object { $_.FullName -like '*/00_Metadata/case.json' } | Select-Object -First 1; $w = New-Object IO.StreamWriter($en.Open()); $w.Write('{"tampered":true}'); $w.Dispose(); $zu.Dispose()
-    $v2 = @(Test-As4EvidencePackage $bad); Assert (@($v2 | Where-Object Status -eq 'MISMATCH').Count -ge 1) 'tampering not detected'
-    Remove-Item -LiteralPath $bad, "$bad.sha256" -Force
-    "$(@($v).Count) checks passed; tampering detected"
 }
 T 'SE01' 'AS4 leaves its own footprint out: matches on its folder, scripts and bundled tools are dropped from Quick Scan, Hayabusa findings, Live Hunt and Prefetch; ordinary activity is kept' {
     Assert (Test-As4SelfText "C:\x\cmd.exe /c $($global:P.Root)\tools\Hayabusa\hayabusa.exe csv-timeline") 'root path'; Assert (Test-As4SelfText 'ScriptBlock: function Get-LhIndicators {') 'marker'; Assert (-not (Test-As4SelfText 'powershell -enc AAAA from C:\Users\x\Downloads\evil.ps1')) 'ordinary text must stay'

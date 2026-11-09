@@ -462,7 +462,7 @@ function Get-LhNextSteps {
     foreach ($x in ($Findings | Where-Object { $_.Sev -eq 'high' -and $_.Next } | Group-Object Next | Sort-Object Count -Descending | Select-Object -First 5)) { [void]$n.Add($x.Name) }
     if ($Verdict.Score -ge 8) { [void]$n.Add('Run First Response > Suspected malware to copy the files and logs that prove or disprove these leads.'); [void]$n.Add('Export the event logs and run Quick Scan on them.') }
     if ($Verdict.Score -eq 0) { [void]$n.Add('If this machine was flagged by something else, collect its event logs and run Quick Scan; the live state alone cannot show what happened earlier.') }
-    [void]$n.Add('Write down the time you started, who has access and what you changed (Evidence package > notes).')
+    [void]$n.Add('Write down the time you started, who has access and what you changed.')
     @($n)
 }
 

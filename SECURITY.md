@@ -7,7 +7,7 @@ If you find a way for AS4 to modify, delete or send data from the machine it run
 ## What AS4 promises
 
 - It makes no network connections of its own and downloads nothing on the machine it examines. (Windows' own signature check may contact certificate authorities for revocation data when the machine is online; disconnect the network first if you need zero traffic.)
-- It does not stop, delete, quarantine or change anything on that machine. It writes only inside `output\<case>\` and, for packages, `output\_packages\`.
+- It does not stop, delete, quarantine or change anything on that machine. It writes only inside `output\<case>\`.
 - It hashes what it writes (SHA-256) and seals each run.
 
 ## What it cannot promise

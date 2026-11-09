@@ -12,7 +12,6 @@
 3. Work through the pages on the left. **Not sure where to start? Open First Response**, pick the situation and press *Run this*; then read the Live Hunt report. Pages:
    - **First Response**: seven situations (first 5 minutes, malware, logons/RDP, ransomware, data theft, persistence, full). AS4 picks what to collect and in which order.
    - **Live Hunt** (Analyze group): *Run Live Hunt* gives a verdict for this machine in about 30 seconds; *Live Watch* records what starts and connects; *Take snapshot* and *Compare* show what changed.
-   - **Evidence Package** (Case group): write notes, build the zip with the chain-of-custody record, verify a package.
    - **Quick Response**: one button per command, or Run quick set.
    - **Event Logs**: tick channels, optional event IDs and UTC time range, Export.
    - **Artifacts**: tick categories (details are shown for each), optional date, extension and size filters.
@@ -23,7 +22,7 @@
    - **Hayabusa**: answer three questions (which logs, when, how serious), tick what you want to find (for example Remote Desktop (RDP) activity, Failed logons, PowerShell activity, Persistence, Accounts created, Logs cleared) and press Run selected. The findings appear in one table, coloured by severity, with a search box and severity filter. A timeline CSV, an HTML report and the raw output are saved in 11_Hayabusa_Analysis. If no logs were exported yet, it offers to export them. **Hayabusa Advanced** has every command, option and filter.
    - **Chainsaw / KAPE / IOC, YARA, Timeline**: analysis and collection with the other bundled tools.
    - **Report and Integrity**: Verify hashes, Create report.
-4. Take the whole `output\<case name>\` folder with you, or build an evidence package and take `output\_packages\`.
+4. Take the whole `output\<case name>\` folder with you.
 
 ## Command line
 `AS4_IR_Tool_CLI.exe`: type the case name, then pick numbers (`1,3,5-8`), `Q` for the quick set, `A` for all, `B` to go back, `C` to change case, `H` for help. Quick Scan is option 7, Hayabusa is option 8: pick questions by number, then answer which logs, when and how serious. V opens the advanced options (P preset, C command, I input, O all options, V show command, R run).

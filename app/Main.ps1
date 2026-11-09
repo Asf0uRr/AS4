@@ -1,6 +1,6 @@
 <#
  AS4 IR Tool - entry point. The root folder is derived from this file's location, so the folder can sit on any drive or path.
- Usage: AS4_IR_Tool_CLI.exe [-Cli | -Check] [-Batch quick|full|triage|evtx|hunt|first5|malware|logons|ransomware|insider|persistence|package -Case "name"]
+ Usage: AS4_IR_Tool_CLI.exe [-Cli | -Check] [-Batch quick|full|triage|evtx|hunt|first5|malware|logons|ransomware|insider|persistence -Case "name"]
 #>
 param(
     [switch]$Gui, [switch]$Cli, [switch]$Check, [switch]$SelfTest,
@@ -11,7 +11,7 @@ $appDir = $PSScriptRoot
 if (-not $Root) { $Root = Split-Path -Parent $appDir }
 
 $parts = @((Join-Path $appDir 'Core.ps1'))
-foreach ($f in 'QuickResponse', 'Persistence', 'EventLogs', 'Artifacts', 'Hayabusa', 'QuickScan', 'Chainsaw', 'Kape', 'Memory', 'Yara', 'IocSearch', 'Timeline', 'Integrity', 'Report', 'LiveHunt', 'LiveReport', 'LiveWatch', 'Scenarios', 'Package') { $parts += (Join-Path $Root "tasks\$f.ps1") }
+foreach ($f in 'QuickResponse', 'Persistence', 'EventLogs', 'Artifacts', 'Hayabusa', 'QuickScan', 'Chainsaw', 'Kape', 'Memory', 'Yara', 'IocSearch', 'Timeline', 'Integrity', 'Report', 'LiveHunt', 'LiveReport', 'LiveWatch', 'Scenarios') { $parts += (Join-Path $Root "tasks\$f.ps1") }
 $parts += (Join-Path $appDir 'Cli.ps1'); $parts += (Join-Path $appDir 'Gui.ps1'); $parts += (Join-Path $appDir 'GuiLive.ps1'); $parts += (Join-Path $appDir 'CliLive.ps1')
 foreach ($p in $parts) {
     if (-not (Test-Path -LiteralPath $p)) { Write-Host "Missing file: $p" -ForegroundColor Red; exit 2 }
@@ -56,7 +56,6 @@ if ($Batch) {
         'triage' { Invoke-As4Batch -Tasks @(Get-As4TriageTasks) -Label 'triage' }
         'evtx'   { $c = Get-As4EvtxChannels | Where-Object { $_.Group -in 'Core', 'PowerShell' } | ForEach-Object { $_.Name }; Export-As4Evtx -Channels $c | Out-Null; @() }
         'hunt'    { $h = Invoke-LiveHunt -OnProgress { param($i, $n, $m) Write-Host "  [$i/$n] $m" -ForegroundColor Cyan }; if ($h.Verdict) { Write-Host "  Verdict: $($h.Verdict.Verdict) (score $($h.Verdict.Score))" -ForegroundColor Yellow; Write-Host "  Report: $($h.Files.Html)" }; @($h.Entry) }
-        'package' { $k = New-As4EvidencePackage -Fast; Write-Host "  Package: $($k.Path)"; @() }
         default  { if (@(Get-As4Scenarios | Where-Object Id -eq $Batch).Count) { $sr = Invoke-As4Scenario -Id $Batch -OnProgress { param($i, $n, $m) Write-Host "  [$i/$n] $m" -ForegroundColor Cyan }; @($sr.Results) } else { Write-Host "Unknown batch '$Batch' (quick, full, triage, evtx, hunt, package, first5, malware, logons, ransomware, insider, persistence, full)" -ForegroundColor Red; exit 6 } }
     }
     Show-ResultTable $res
